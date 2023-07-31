@@ -69,7 +69,7 @@ export const action = async ({ request }: ActionArgs) => {
   } catch (error) {
     console.log("Failed to send email");
     console.log(error);
-    throw json(null, { status: 502 });
+    throw json(null, { status: 500 });
   }
 
   const searchParams = new URLSearchParams();
