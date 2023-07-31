@@ -21,7 +21,7 @@ const SignupSchema = z
         required_error: "Full name is required",
         invalid_type_error: "Full name must be a string",
       })
-      .min(10, "Full name must be at least 10 characters")
+      .min(4, "Full name must be at least 4 characters")
       .max(255, "Full name must be at most 255 characters"),
     password: z
       .string({
