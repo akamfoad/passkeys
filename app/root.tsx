@@ -1,4 +1,4 @@
-import type { LinksFunction } from "@remix-run/node";
+import type { LinksFunction, LoaderArgs } from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -9,8 +9,15 @@ import {
 } from "@remix-run/react";
 
 import styles from "~/styles/tailwind.css";
+import { authenticate } from "./utils/auth.server";
 
 export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
+
+export const loader = async ({ request }: LoaderArgs) => {
+  const { user } = await authenticate(request);
+
+  return { user };
+};
 
 export default function App() {
   return (
@@ -21,7 +28,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="min-h-screen">
         <Outlet />
         <ScrollRestoration />
         <Scripts />
