@@ -13,7 +13,10 @@ export const authenticate = async (request: Request) => {
 
   if (!id) throw redirect("/login");
 
-  const user = await db.user.findUnique({ where: { id, isVerified: true } });
+  const user = await db.user.findUnique({
+    where: { id, isVerified: true },
+    select: { id: true, name: true, email: true },
+  });
 
   if (user === null) {
     const headers = new Headers();
