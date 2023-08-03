@@ -5,12 +5,6 @@ import { db } from "./db.server";
 export const authenticate = async (request: Request) => {
   const id = await tokenCookie.parse(request.headers.get("Cookie"));
 
-  const { pathname } = new URL(request.url);
-
-  const isLoginPage = pathname === "/login";
-
-  if (isLoginPage) return {};
-
   if (!id) throw redirect("/login");
 
   const user = await db.user.findUnique({

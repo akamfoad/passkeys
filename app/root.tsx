@@ -25,10 +25,19 @@ export const links: LinksFunction = () => [
   },
 ];
 
-export const loader = async ({ request }: LoaderArgs) => {
-  const { user } = await authenticate(request);
+const isLoginPage = (request: Request) => {
+  const { pathname } = new URL(request.url);
 
-  return { user };
+  return pathname === "/login";
+};
+
+export const loader = async ({ request }: LoaderArgs) => {
+  if (!isLoginPage(request)) {
+    const { user } = await authenticate(request);
+    return { user };
+  }
+
+  return { user: undefined };
 };
 
 export default function App() {

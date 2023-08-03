@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { nameSchema } from "./user";
 
 const emailSchema = z
   .string({
@@ -24,14 +25,8 @@ export const SigninSchema = z
 
 export const SignupSchema = z
   .object({
+    name: nameSchema,
     email: emailSchema,
     password: passwordSchema,
-    name: z
-      .string({
-        required_error: "Full name is required",
-        invalid_type_error: "Full name must be a string",
-      })
-      .min(4, "Full name must be at least 4 characters")
-      .max(255, "Full name must be at most 255 characters"),
   })
   .required();
