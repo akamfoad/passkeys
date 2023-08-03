@@ -21,18 +21,18 @@ export const links: LinksFunction = () => [
   },
   {
     rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap",
+    href: "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap",
   },
 ];
 
-const isLoginPage = (request: Request) => {
+const isAuthPage = (request: Request) => {
   const { pathname } = new URL(request.url);
 
-  return pathname === "/login";
+  return pathname === "/login" || pathname === "/signup";
 };
 
 export const loader = async ({ request }: LoaderArgs) => {
-  if (!isLoginPage(request)) {
+  if (!isAuthPage(request)) {
     const { user } = await authenticate(request);
     return { user };
   }

@@ -54,7 +54,7 @@ const Login = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center px-4 sm:px-0">
       {congratulatee !== null && (
         <div
           ref={congratulateeRef}
@@ -90,7 +90,7 @@ const Login = () => {
         )}
       >
         <div>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:gap-6 gap-1">
             <label className="w-20" htmlFor="email">
               Email:
             </label>
@@ -103,12 +103,12 @@ const Login = () => {
               autoComplete="email"
             />
           </div>
-          <p className="ms-24 ps-1 mt-1 text-rose-500 text-sm font-medium">
+          <p className="sm:ms-24 sm:ps-1 mt-1 text-rose-500 text-sm font-medium">
             &nbsp;{errors?.email?.[0]}
           </p>
         </div>
         <div>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:gap-6 gap-1">
             <label className="w-20" htmlFor="password">
               Password:
             </label>
@@ -120,11 +120,11 @@ const Login = () => {
               autoComplete="current-password"
             />
           </div>
-          <p className="ms-24 ps-1 mt-1 text-rose-500 text-sm font-medium">
+          <p className="sm:ms-24 sm:ps-1 mt-1 text-rose-500 text-sm font-medium">
             &nbsp;{errors?.password?.[0]}
           </p>
         </div>
-        <button className="px-5 py-2 bg-emerald-700 rounded-lg self-center text-white font-medium">
+        <button className="mt-6 px-5 py-2 bg-emerald-700 rounded-lg self-center text-white font-medium">
           Sign in
         </button>
         <Link className="self-center px-5 py-2 rounded-lg" to="/signup">

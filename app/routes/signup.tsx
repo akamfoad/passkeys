@@ -58,13 +58,13 @@ const Signup = () => {
   const errors = useActionData<typeof action>();
 
   return (
-    <div className="flex justify-center items-center">
+    <div className="flex flex-col items-center px-4 sm:px-0">
       <Form
         method="POST"
         className="flex flex-col gap-4 mt-6 bg-slate-100 w-full max-w-lg p-4 rounded-md"
       >
         <div>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:gap-6 gap-1">
             <label className="w-20" htmlFor="name">
               Full name:
             </label>
@@ -76,10 +76,10 @@ const Signup = () => {
               autoComplete="name"
             />
           </div>
-          <p className="ms-24 ps-1 mt-1 text-rose-500 text-sm font-medium">&nbsp;{errors?.name?.[0]}</p>
+          <p className="sm:ms-24 sm:ps-1 mt-1 text-rose-500 text-sm font-medium">&nbsp;{errors?.name?.[0]}</p>
         </div>
         <div>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:gap-6 gap-1">
             <label className="w-20" htmlFor="email">
               Email:
             </label>
@@ -91,10 +91,10 @@ const Signup = () => {
               autoComplete="email"
             />
           </div>
-          <p className="ms-24 ps-1 mt-1 text-rose-500 text-sm font-medium">&nbsp;{errors?.email?.[0]}</p>
+          <p className="sm:ms-24 sm:ps-1 mt-1 text-rose-500 text-sm font-medium">&nbsp;{errors?.email?.[0]}</p>
         </div>
         <div>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:gap-6 gap-1">
             <label className="w-20" htmlFor="password">
               Password:
             </label>
@@ -106,9 +106,9 @@ const Signup = () => {
               autoComplete="new-password"
             />
           </div>
-          <p className="ms-24 ps-1 mt-1 text-rose-500 text-sm font-medium">&nbsp;{errors?.password?.[0]}</p>
+          <p className="sm:ms-24 sm:ps-1 mt-1 text-rose-500 text-sm font-medium">&nbsp;{errors?.password?.[0]}</p>
         </div>
-        <button className="px-5 py-2 bg-emerald-700 rounded-lg self-center text-white font-medium">
+        <button className="mt-6 px-5 py-2 bg-emerald-700 rounded-lg self-center text-white font-medium">
           Sign up
         </button>
         <Link className="self-center px-5 py-2 rounded-lg" to="/login">
