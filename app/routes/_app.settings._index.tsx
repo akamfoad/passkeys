@@ -1,4 +1,3 @@
-import classNames from "classnames";
 import { json } from "@remix-run/node";
 import {
   Form,
@@ -8,12 +7,12 @@ import {
   useNavigation,
 } from "@remix-run/react";
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
-import type { ClassAttributes, InputHTMLAttributes } from "react";
 
 import { db } from "~/utils/db.server";
 import { nameSchema } from "~/shared/schema/user";
 import { useDebounce } from "~/utils/useDebounce";
 import { authenticate } from "~/utils/auth.server";
+import { Input } from "~/components/Input";
 
 export const loader = async ({ request }: LoaderArgs) => {
   const { user } = await authenticate(request);
@@ -42,17 +41,6 @@ export const action = async ({ request }: ActionArgs) => {
   return new Response(undefined, { status: 200 });
 };
 
-const Input = (
-  props: JSX.IntrinsicAttributes &
-    ClassAttributes<HTMLInputElement> &
-    InputHTMLAttributes<HTMLInputElement>
-) => (
-  <input
-    {...props}
-    className={classNames("rounded-md bg-white block p-2", props.className)}
-  />
-);
-
 const GeneralSettings = () => {
   const navigation = useNavigation();
   const { user } = useLoaderData<typeof loader>();
@@ -67,7 +55,7 @@ const GeneralSettings = () => {
 
   return (
     <section>
-      <Form method="POST" className="space-y-10">
+      <Form method="POST" className="space-y-6">
         <div className="space-y-1">
           <label className="min-w-[80px]">Full name:</label>
           <Input
