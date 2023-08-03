@@ -104,7 +104,7 @@ const SecuritySettings = () => {
   return (
     <section>
       <Form method="POST" className="space-y-4">
-        <input type="hidden" name="email" value={email} />
+        <input type="hidden" name="email" value={email} hidden />
         <div className="space-y-1">
           <label className="min-w-[80px]">Current Password:</label>
           <Input
