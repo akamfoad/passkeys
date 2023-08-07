@@ -56,7 +56,7 @@ export const loader = async ({ request }: LoaderArgs) => {
 };
 
 export const action = async ({ request }: ActionArgs) => {
-  const { user } = await authenticate(request, true);
+  const { user } = await authenticate(request, {withPassword: true});
 
   const formData = await request.formData();
 

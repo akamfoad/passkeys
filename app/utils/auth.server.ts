@@ -4,7 +4,10 @@ import { db } from "./db.server";
 
 export const authenticate = async (
   request: Request,
-  withPassword?: boolean
+  {
+    withPassword = undefined,
+    withChallenge = undefined,
+  }: { withPassword?: true; withChallenge?: true } = {}
 ) => {
   const id = await tokenCookie.parse(request.headers.get("Cookie"));
 
@@ -19,6 +22,7 @@ export const authenticate = async (
       name: true,
       email: true,
       password: withPassword === true,
+      currentChallenge: withChallenge === true,
     },
   });
 
