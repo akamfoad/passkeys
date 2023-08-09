@@ -33,13 +33,13 @@ const NavLinkC = ({
 
 const Settings = () => {
   return (
-    <div className="flex gap-2">
+    <div className="flex flex-col sm:flex-row gap-2">
       <div className="flex flex-col gap-2 min-w-[250px]">
         <NavLinkC icon={<GearIcon />} to="" end text="General" />
         <NavLinkC icon={<Shield />} to="security" text="Security" />
         <NavLinkC icon={<KeyIcon />} to="passkeys" text="Passkeys" />
       </div>
-      <section className="ps-20 flex-1 rounded-md">
+      <section className="mt-14 sm:mt-0 sm:ps-20 flex-1 rounded-md">
         <Outlet />
       </section>
     </div>

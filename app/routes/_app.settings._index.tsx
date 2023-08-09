@@ -73,7 +73,7 @@ const GeneralSettings = () => {
           <Input
             name="email"
             defaultValue={user.email}
-            className="w-full lg:w-1/3  bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50 placeholder:select-none pointer-events-none"
+            className="w-full lg:w-1/3  bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-950/50 placeholder:select-none pointer-events-none"
             disabled
             readOnly
           />
