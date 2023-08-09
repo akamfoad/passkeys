@@ -1,10 +1,14 @@
+import { useState } from "react";
+import classNames from "classnames";
 import { Link } from "@remix-run/react";
 import { startRegistration } from "@simplewebauthn/browser";
-import { useState } from "react";
 import { Icon } from "~/icons/App";
 
 const AddPasskey = () => {
-  const [statusText, setStatusText] = useState("");
+  const [status, setStatus] = useState<{
+    type: "COOL" | "DANG" | null;
+    message: string;
+  }>({ type: null, message: "" });
   const [isSuccess, setIsSuccess] = useState<true | undefined>(undefined);
 
   const generatePasskey = async () => {
@@ -12,15 +16,17 @@ const AddPasskey = () => {
     const resp = await fetch("/actions/passkeys/registration");
     let attResp;
     try {
-      const {options} = await resp.json()
+      const { options } = await resp.json();
       attResp = await startRegistration(options);
     } catch (error) {
-      if (error.name === "InvalidStateError") {
-        setStatusText(
-          "Error: Authenticator was probably already registered by user"
-        );
+      if ((error as Error).name === "InvalidStateError") {
+        setStatus({
+          type: "DANG",
+          message:
+            "Error: Authenticator was probably already registered by user",
+        });
       } else {
-        setStatusText((error as Error).message);
+        setStatus({ type: "DANG", message: (error as Error).message });
       }
 
       throw error;
@@ -40,7 +46,10 @@ const AddPasskey = () => {
     const verificationJSON = await verificationResp.json();
 
     if (verificationJSON && verificationJSON.verified) {
-      setStatusText("Successfully generated passkey");
+      setStatus({
+        type: "COOL",
+        message: "Successfully generated passkey",
+      });
       setIsSuccess(true);
     }
   };
@@ -62,13 +71,20 @@ const AddPasskey = () => {
         Passkeys can be used for sign-in as a simple and secure alternative to
         your password and two-factor credentials.
       </p>
-      <p>&nbsp; {statusText}</p>
-      <div className="flex items-center justify-center gap-6">
-        <Link className="px-6 py-2" to="..">
+      <p
+        className={classNames("text-sm p-2 font-medium basis-0 rounded-md my-4", {
+          "bg-rose-400/20 text-rose-800 ": status.type === "DANG",
+          "bg-emerald-300/20 text-emerald-800 ": status.type === "COOL",
+        })}
+      >
+        &nbsp;{status.message}
+      </p>
+      <div className="flex items-center justify-center gap-6 mt-10">
+        <Link className="px-6 py-2" to="/settings/passkeys">
           Cancel
         </Link>
         {isSuccess === true ? (
-          <Link className="px-6 py-2" to="..">
+          <Link className="px-6 py-2" to="/settings/passkeys">
             See your passkeys
           </Link>
         ) : (

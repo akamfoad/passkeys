@@ -1,5 +1,7 @@
-import { json, type LoaderArgs } from "@remix-run/node";
+import { useEffect, useState } from "react";
 import { Link, useLoaderData } from "@remix-run/react";
+import { json, type LoaderArgs } from "@remix-run/node";
+import { browserSupportsWebAuthn } from "@simplewebauthn/browser";
 import { authenticate } from "~/utils/auth.server";
 import { db } from "~/utils/db.server";
 
@@ -22,16 +24,26 @@ export const loader = async ({ request }: LoaderArgs) => {
 const PasskeysSettings = () => {
   const { passkeys } = useLoaderData<typeof loader>();
 
+  const [isPasskeySupported, setIsPasskeySupported] = useState(
+    typeof navigator === "undefined" ? false : browserSupportsWebAuthn()
+  );
+
+  useEffect(() => {
+    setIsPasskeySupported(browserSupportsWebAuthn());
+  }, []);
+
   return (
     <section>
-      <header className="flex items-center justify-between">
-        <h1>Your Passkeys</h1>
-        <Link
-          className="px-5 py-2 bg-emerald-700 rounded-lg self-center text-white font-medium"
-          to="add-passkey"
-        >
-          Add a passkey
-        </Link>
+      <header className="flex items-center justify-between mb-8">
+        <h1 className="text-lg font-medium">Your Passkeys</h1>
+        {isPasskeySupported && (
+          <Link
+            className="px-5 py-2 bg-emerald-700 rounded-lg self-center text-white font-medium"
+            to="add-passkey"
+          >
+            Add a passkey
+          </Link>
+        )}
       </header>
       {Array.isArray(passkeys) && (
         <ul>
