@@ -48,10 +48,10 @@ export const action = async ({ request }: ActionArgs) => {
   const { verified, authenticationInfo } = verification;
 
   if (verified && authenticationInfo !== undefined) {
-    const { id: userId } = await db.authenticator.update({
+    const { userId } = await db.authenticator.update({
       where: { credentialID },
       data: { counter: authenticationInfo.newCounter },
-      select: { id: true },
+      select: { userId: true },
     });
 
     const headers = new Headers();
