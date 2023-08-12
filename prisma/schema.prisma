@@ -6,7 +6,6 @@ datasource db {
   provider          = "postgresql"
   url               = env("POSTGRES_PRISMA_URL")
   directUrl         = env("POSTGRES_URL_NON_POOLING")
-  shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 model User {
@@ -23,6 +22,7 @@ model User {
 model Authenticator {
   id                   String  @id @default(cuid())
   userId               Int
+  name                 String?
   credentialID         String  @unique
   credentialPublicKey  Bytes
   counter              BigInt
