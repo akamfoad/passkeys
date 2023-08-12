@@ -27,10 +27,10 @@ export const loader = async ({ request }: LoaderArgs) => {
     attestationType: "none",
     // Prevent users from re-registering existing authenticators
     excludeCredentials: userAuthenticators.map((authenticator) => ({
-      id: authenticator.credentialID,
+      id: Buffer.from(authenticator.credentialID),
       type: "public-key",
       // Optional
-      transports: authenticator.transports,
+      transports: authenticator.transports || undefined,
     })),
   });
 
