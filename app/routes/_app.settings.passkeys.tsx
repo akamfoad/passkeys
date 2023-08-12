@@ -110,12 +110,11 @@ const PasskeysSettings = () => {
                     <div>
                       <h2>
                         <span className="font-medium">{name}</span>
-                        {credentialBackedUp ||
-                          (true && (
-                            <span className="ms-2 text-xs font-li px-1.5 py-1 rounded-full bg-sky-500/20 text-sky-950">
-                              Synced
-                            </span>
-                          ))}
+                        {credentialBackedUp && (
+                          <span className="ms-2 text-xs font-li px-1.5 py-1 rounded-full bg-sky-500/20 text-sky-950">
+                            Synced
+                          </span>
+                        )}
                       </h2>
                       <p className="text-sm font-light text-slate-800 mt-2">
                         <span>
