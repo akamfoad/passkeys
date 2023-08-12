@@ -2,7 +2,6 @@ import { UAParser } from "ua-parser-js";
 
 export const generatePasskeyName = (ua: string) => {
   const parser = new UAParser(ua);
-  console.log(parser.getResult());
   let string = `${parser.getBrowser().name} on `;
 
   let { model } = parser.getDevice();

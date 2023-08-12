@@ -17,7 +17,6 @@ export const loader = async ({ request }: LoaderArgs) => {
     select: { id: true, name: true, credentialBackedUp: true },
   });
 
-  console.log(authenticators);
   return json({ passkeys: authenticators });
 };
 
