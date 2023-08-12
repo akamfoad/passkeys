@@ -139,7 +139,7 @@ const Login = () => {
                 id="email"
                 placeholder="pasha@soran.mir"
                 className="rounded-md bg-white block p-2 w-full"
-                autoComplete="email webauthn"
+                autoComplete="email username webauthn"
               />
               <button
                 onClick={loginWithPasskeys}
