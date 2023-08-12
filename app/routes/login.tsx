@@ -1,12 +1,20 @@
-import { json, type ActionArgs, redirect } from "@remix-run/node";
-import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
 import classNames from "classnames";
+import { useEffect, useRef } from "react";
+import { json, type ActionArgs, redirect } from "@remix-run/node";
+import {
+  Form,
+  Link,
+  useActionData,
+  useNavigate,
+  useSearchParams,
+} from "@remix-run/react";
 
 import { db } from "~/utils/db.server";
 import { LoginSchema } from "~/shared/schema/auth";
 import { isPasswordMatch } from "~/utils/password.server";
 import { tokenCookie } from "~/utils/token.server";
-import { useEffect, useRef } from "react";
+import { startAuthentication } from "@simplewebauthn/browser";
+import { Icon } from "~/icons/App";
 
 export const action = async ({ request }: ActionArgs) => {
   const requestData = await request.formData();
@@ -41,6 +49,7 @@ export const action = async ({ request }: ActionArgs) => {
 };
 
 const Login = () => {
+  const navigate = useNavigate();
   const congratulateeRef = useRef<HTMLDivElement | null>(null);
   const errors = useActionData<typeof action>();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -52,6 +61,35 @@ const Login = () => {
       congratulateeRef.current.classList.replace("max-h-10", "max-h-0");
     }
   }, []);
+
+  const loginWithPasskeys = async () => {
+    const resp = await fetch("/actions/passkeys/authentication");
+    const { options } = await resp.json();
+
+    let asseResp;
+    try {
+      asseResp = await startAuthentication(options);
+    } catch (error) {
+      throw error;
+    }
+
+    const verificationResp = await fetch("/actions/passkeys/authentication", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ asseResp, challenge: options.challenge }),
+      redirect: "follow",
+    });
+
+    // Wait for the results of verification
+    const verificationJSON = await verificationResp.json();
+
+    // Show UI appropriate for the `verified` status
+    if (verificationJSON && verificationJSON.verified) {
+      navigate("/");
+    }
+  };
 
   return (
     <div className="flex flex-col items-center px-4 sm:px-0">
@@ -94,14 +132,23 @@ const Login = () => {
             <label className="w-20" htmlFor="email">
               Email:
             </label>
-            <input
-              type="email"
-              name="email"
-              id="email"
-              placeholder="pasha@soran.mir"
-              className="rounded-md bg-white block p-2 flex-1"
-              autoComplete="email webauthn"
-            />
+            <div className="relative flex-1">
+              <input
+                type="email"
+                name="email"
+                id="email"
+                placeholder="pasha@soran.mir"
+                className="rounded-md bg-white block p-2 w-full"
+                autoComplete="email webauthn"
+              />
+              <button
+                onClick={loginWithPasskeys}
+                type="button"
+                className="aspect-square p-2 rounded-lg text-slate-600 hover:bg-slate-500/10 flex items-center justify-center absolute right-3 inset-y-0 my-auto"
+              >
+                <Icon height={16} />
+              </button>
+            </div>
           </div>
           <p className="sm:ms-24 sm:ps-1 mt-1 text-rose-500 text-sm font-medium">
             &nbsp;{errors?.email?.[0]}

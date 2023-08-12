@@ -1,4 +1,4 @@
-import { json, type ActionArgs, type LoaderArgs } from "@remix-run/node";
+import { json, type ActionArgs } from "@remix-run/node";
 import { rpID, type Authenticator, rpOrigin } from "~/utils/passkeys.server";
 import {
   generateAuthenticationOptions,
@@ -6,48 +6,27 @@ import {
 } from "@simplewebauthn/server";
 
 import { db } from "~/utils/db.server";
-import { authenticate } from "~/utils/auth.server";
+import { tokenCookie } from "~/utils/token.server";
 
-export const loader = async ({ request }: LoaderArgs) => {
-  const { user } = await authenticate(request);
-
-  const userAuthenticators = (await db.authenticator.findMany({
-    where: { userId: user.id },
-  })) as unknown as Authenticator[];
-
+export const loader = async () => {
   const options = generateAuthenticationOptions({
-    // Require users to use a previously-registered authenticator
-    allowCredentials: userAuthenticators.map((authenticator) => ({
-      id: authenticator.credentialID,
-      type: "public-key",
-      // Optional
-      transports: authenticator.transports,
-    })),
     userVerification: "preferred",
-  });
-
-  await db.user.update({
-    where: { id: user.id },
-    data: { currentChallenge: options.challenge },
   });
 
   return { options };
 };
 
 export const action = async ({ request }: ActionArgs) => {
-  const { user } = await authenticate(request, { withChallenge: true });
-
-  const body = await request.json();
-
-  // should match the `id` in the returned credential
-  //   const authenticator = getUserAuthenticator(user, body.id);
+  const { asseResp: body, challenge: expectedChallenge } = await request.json();
+  const credentialID = (body.id + "=").split("_").join("/");
   const authenticator = (await db.authenticator.findUnique({
-    where: { id: body.id, userId: user.id },
+    where: { credentialID },
   })) as unknown as Authenticator;
 
   if (!authenticator) {
-    throw new Error(
-      `Could not find authenticator ${body.id} for user ${user.id}`
+    throw json(
+      { message: `Could not find authenticator ${body.id}` },
+      { status: 401 }
     );
   }
 
@@ -56,7 +35,7 @@ export const action = async ({ request }: ActionArgs) => {
   try {
     verification = await verifyAuthenticationResponse({
       response: body,
-      expectedChallenge: user.currentChallenge as string,
+      expectedChallenge,
       expectedOrigin: rpOrigin,
       expectedRPID: rpID,
       authenticator,
@@ -69,11 +48,17 @@ export const action = async ({ request }: ActionArgs) => {
   const { verified, authenticationInfo } = verification;
 
   if (verified && authenticationInfo !== undefined) {
-    await db.authenticator.update({
-      where: { id: body.id },
+    const { id: userId } = await db.authenticator.update({
+      where: { credentialID },
       data: { counter: authenticationInfo.newCounter },
+      select: { id: true },
     });
+
+    const headers = new Headers();
+    headers.append("Set-Cookie", await tokenCookie.serialize(userId));
+
+    return json({ verified }, { headers });
   }
 
-  return { verified };
+  return json({ message: "Something went wrong" }, { status: 500 });
 };
