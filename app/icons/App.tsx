@@ -1,6 +1,6 @@
-export const Icon = () => {
+export const Icon = ({ height = 32 }: { height?: number }) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" height={height} viewBox="0 0 24 24">
       <circle fill="currentColor" cx="10.5" cy="6" r="4.5" />
       <path
         fill="currentColor"

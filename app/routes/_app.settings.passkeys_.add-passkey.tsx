@@ -12,9 +12,11 @@ const AddPasskey = () => {
     message: string;
   }>({ type: null, message: "" });
   const [isSuccess, setIsSuccess] = useState<true | undefined>(undefined);
+  const [isCreating, setIsCreating] = useState(false);
 
   const generatePasskey = async () => {
     // @simplewebauthn/server -> generateRegistrationOptions()
+    setIsCreating(true);
     const resp = await fetch("/actions/passkeys/registration");
     let attResp;
     try {
@@ -31,6 +33,7 @@ const AddPasskey = () => {
         setStatus({ type: "DANG", message: (error as Error).message });
       }
 
+      setIsCreating(false);
       throw error;
     }
 
@@ -57,10 +60,12 @@ const AddPasskey = () => {
       });
       setIsSuccess(true);
     }
+
+    setIsCreating(false);
   };
 
   return (
-    <section className="max-w-sm">
+    <section className="max-w-sm mx-auto sm:mx-0">
       <h1 className="text-center mb-6 text-lg font-light">
         Configure passwordless authentication
       </h1>
@@ -97,10 +102,13 @@ const AddPasskey = () => {
           </Link>
         ) : (
           <button
-            className="px-5 py-2 bg-emerald-700 rounded-lg self-center text-white font-medium"
+            className={classNames(
+              "px-5 py-2 bg-emerald-700 rounded-lg self-center text-white font-medium",
+              { "opacity-70": isCreating }
+            )}
             onClick={generatePasskey}
           >
-            Add passkey
+            {isCreating ? "Adding passkey..." : "Add passkey"}
           </button>
         )}
       </div>
