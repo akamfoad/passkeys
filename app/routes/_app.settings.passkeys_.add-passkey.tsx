@@ -2,7 +2,9 @@ import { useState } from "react";
 import classNames from "classnames";
 import { Link } from "@remix-run/react";
 import { startRegistration } from "@simplewebauthn/browser";
+
 import { Icon } from "~/icons/App";
+import { generatePasskeyName } from "~/utils/ua";
 
 const AddPasskey = () => {
   const [status, setStatus] = useState<{
@@ -39,7 +41,10 @@ const AddPasskey = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(attResp),
+      body: JSON.stringify({
+        attResp,
+        name: generatePasskeyName(navigator.userAgent),
+      }),
     });
 
     // Wait for the results of verification
@@ -72,10 +77,13 @@ const AddPasskey = () => {
         your password and two-factor credentials.
       </p>
       <p
-        className={classNames("text-sm p-2 font-medium basis-0 rounded-md my-4", {
-          "bg-rose-400/20 text-rose-800 ": status.type === "DANG",
-          "bg-emerald-300/20 text-emerald-800 ": status.type === "COOL",
-        })}
+        className={classNames(
+          "text-sm p-2 font-medium basis-0 rounded-md my-4",
+          {
+            "bg-rose-400/20 text-rose-800 ": status.type === "DANG",
+            "bg-emerald-300/20 text-emerald-800 ": status.type === "COOL",
+          }
+        )}
       >
         &nbsp;{status.message}
       </p>

@@ -14,7 +14,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   // deleting the passkey
   const authenticators = await db.authenticator.findMany({
     where: { userId: user.id },
-    select: { id: true, credentialBackedUp: true },
+    select: { id: true, name: true, credentialBackedUp: true },
   });
 
   console.log(authenticators);
@@ -47,9 +47,9 @@ const PasskeysSettings = () => {
       </header>
       {Array.isArray(passkeys) && (
         <ul>
-          {passkeys.map(({ id, credentialBackedUp }) => (
+          {passkeys.map(({ id, name, credentialBackedUp }) => (
             <li key={id}>
-              <h2>Name: TBD</h2>
+              <h2>Name: {name}</h2>
               <div>Id: {id}</div>
               <p>{credentialBackedUp ? "Backedup" : "Not backedup"}</p>
             </li>

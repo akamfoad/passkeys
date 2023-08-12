@@ -100,7 +100,7 @@ const Login = () => {
               id="email"
               placeholder="pasha@soran.mir"
               className="rounded-md bg-white block p-2 flex-1"
-              autoComplete="email"
+              autoComplete="email webauthn"
             />
           </div>
           <p className="sm:ms-24 sm:ps-1 mt-1 text-rose-500 text-sm font-medium">
@@ -117,7 +117,7 @@ const Login = () => {
               name="password"
               id="password"
               className="rounded-md bg-white block p-2 flex-1"
-              autoComplete="current-password"
+              autoComplete="current-password webauthn"
             />
           </div>
           <p className="sm:ms-24 sm:ps-1 mt-1 text-rose-500 text-sm font-medium">

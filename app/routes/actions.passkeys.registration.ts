@@ -45,7 +45,7 @@ export const loader = async ({ request }: LoaderArgs) => {
 export const action = async ({ request }: ActionArgs) => {
   const { user } = await authenticate(request, { withChallenge: true });
 
-  const body = await request.json();
+  const { attResp: body, name } = await request.json();
 
   let verification;
 
@@ -75,6 +75,7 @@ export const action = async ({ request }: ActionArgs) => {
     await db.authenticator.create({
       data: {
         counter,
+        name,
         userId: user.id,
         credentialBackedUp,
         credentialDeviceType,
