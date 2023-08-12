@@ -16,7 +16,7 @@ const passwordSchema = z
   .min(10, "Password must be at least 10 characters")
   .max(255, "Password must be at most 255 characters");
 
-export const SigninSchema = z
+export const LoginSchema = z
   .object({
     email: emailSchema,
     password: passwordSchema,

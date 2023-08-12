@@ -3,14 +3,14 @@ import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
 import classNames from "classnames";
 
 import { db } from "~/utils/db.server";
-import { SigninSchema } from "~/shared/schema/auth";
+import { LoginSchema } from "~/shared/schema/auth";
 import { isPasswordMatch } from "~/utils/password.server";
 import { tokenCookie } from "~/utils/token.server";
 import { useEffect, useRef } from "react";
 
 export const action = async ({ request }: ActionArgs) => {
   const requestData = await request.formData();
-  const parseResult = SigninSchema.safeParse(Object.fromEntries(requestData));
+  const parseResult = LoginSchema.safeParse(Object.fromEntries(requestData));
 
   if (!parseResult.success) {
     return json(parseResult.error.flatten().fieldErrors, { status: 400 });
@@ -125,7 +125,7 @@ const Login = () => {
           </p>
         </div>
         <button className="mt-6 px-5 py-2 bg-emerald-700 rounded-lg self-center text-white font-medium">
-          Sign in
+          Login
         </button>
         <Link className="self-center px-5 py-2 rounded-lg" to="/signup">
           Sign up
