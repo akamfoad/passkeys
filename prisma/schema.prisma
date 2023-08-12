@@ -4,9 +4,9 @@ generator client {
 
 datasource db {
   provider          = "postgresql"
-  url               = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl         = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
-  shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING") // used for migrations
+  url               = env("POSTGRES_PRISMA_URL")
+  directUrl         = env("POSTGRES_URL_NON_POOLING")
+  shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 model User {
@@ -21,34 +21,13 @@ model User {
 }
 
 model Authenticator {
-  id     String  @id @default(cuid())
-  user   User    @relation(fields: [userId], references: [id])
-  userId Int
-  name   String?
-
-  //   // SQL: Encode to base64url then store as `TEXT`. Index this column
-  // credentialID: Uint8Array;
-  credentialID String @unique @db.Text
-
-  // // SQL: Store raw bytes as `BYTEA`/`BLOB`/etc...
-  // credentialPublicKey: Uint8Array;
-  credentialPublicKey Bytes @db.ByteA
-
-  // // SQL: Consider `BIGINT` since some authenticators return atomic timestamps as counters
-  // counter: number;
-  counter BigInt
-
-  // // SQL: `VARCHAR(32)` or similar, longest possible value is currently 12 characters
-  // // Ex: 'singleDevice' | 'multiDevice'
-  // credentialDeviceType: CredentialDeviceType;
-  credentialDeviceType String @db.VarChar(32)
-
-  // // SQL: `BOOL` or whatever similar type is supported
-  // credentialBackedUp: boolean;
-  credentialBackedUp Boolean
-
-  // // SQL: `VARCHAR(255)` and store string array as a CSV string
-  // // Ex: ['usb' | 'ble' | 'nfc' | 'internal']
-  // transports?: AuthenticatorTransport[];
-  transports String? @db.VarChar(255)
+  id                   String  @id @default(cuid())
+  userId               Int
+  credentialID         String  @unique
+  credentialPublicKey  Bytes
+  counter              BigInt
+  credentialDeviceType String  @db.VarChar(32)
+  credentialBackedUp   Boolean
+  transports           String? @db.VarChar(255)
+  user                 User    @relation(fields: [userId], references: [id])
 }
