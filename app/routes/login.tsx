@@ -13,7 +13,10 @@ import { db } from "~/utils/db.server";
 import { LoginSchema } from "~/shared/schema/auth";
 import { isPasswordMatch } from "~/utils/password.server";
 import { tokenCookie } from "~/utils/token.server";
-import { startAuthentication } from "@simplewebauthn/browser";
+import {
+  browserSupportsWebAuthnAutofill,
+  startAuthentication,
+} from "@simplewebauthn/browser";
 import { Icon } from "~/icons/App";
 
 export const action = async ({ request }: ActionArgs) => {
@@ -60,6 +63,33 @@ const Login = () => {
     if (congratulateeRef.current) {
       congratulateeRef.current.classList.replace("max-h-10", "max-h-0");
     }
+  }, []);
+
+  useEffect(() => {
+    browserSupportsWebAuthnAutofill().then((supported) => {
+      if (supported) {
+        (async () => {
+          fetch("/actions/passkeys/authentication")
+            .then((res) => res.json())
+            .then(({ options }) => {
+              startAuthentication(options, true).then((asseResp) =>
+                fetch("/actions/passkeys/authentication", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    asseResp,
+                    challenge: options.challenge,
+                  }),
+                  redirect: "follow",
+                })
+              );
+            })
+            .catch(console.error);
+        })();
+      }
+    });
   }, []);
 
   const loginWithPasskeys = async () => {
