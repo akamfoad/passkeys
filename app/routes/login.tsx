@@ -109,7 +109,6 @@ const Login = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ asseResp, challenge: options.challenge }),
-      redirect: "follow",
     });
 
     // Wait for the results of verification
@@ -117,7 +116,9 @@ const Login = () => {
 
     // Show UI appropriate for the `verified` status
     if (verificationJSON && verificationJSON.verified) {
-      navigate("/");
+      setTimeout(() => {
+        window.location.pathname = "/";
+      }, 250);
     }
   };
 
