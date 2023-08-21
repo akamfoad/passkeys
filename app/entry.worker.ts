@@ -36,7 +36,7 @@ const loaderCache = new NetworkFirst({
   isLoader: true,
 });
 
-const documentCache = new CacheFirst({
+const documentCache = new NetworkFirst({
   cacheName: `document-cache-${PRODUCT_VERSION}`,
 });
 
