@@ -1,36 +1,67 @@
 {
-  "name": "Passkeys",
-  "lang": "en",
-  "orientation": "portrait-primary",
-  "description": "Passkey demonstration",
-  "background_color": "#e5e5e5",
-  "theme_color": "#020617",
-  "display": "standalone",
-  "start_url": ".",
-  "icons": [
-    {
-      "src": "//manifest-icon-192.maskable.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
+    "id": "dev.akamfoad.passkeys",
+    "name": "Passkeys",
+    "short_name": "Passkeys",
+    "lang": "en",
+    "orientation": "portrait-primary",
+    "description": "Passkey demonstration",
+    "background_color": "#e5e5e5",
+    "theme_color": "#020617",
+    "display": "standalone",
+    "display_override": [
+        "standalone",
+        "browser"
+    ],
+    "shortcuts": [
+        {
+            "name": "Passkeys",
+            "url": "/settings/passkeys",
+            "description": "List of passkeys"
+        }
+    ],
+    "handle_links": "not-preferred",
+    "edge_side_panel": {
+        "preferred_width": 450
     },
-    {
-      "src": "//manifest-icon-192.maskable.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "//manifest-icon-512.maskable.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "//manifest-icon-512.maskable.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    }
-  ]
+    "start_url": ".",
+    "icons": [
+        {
+            "src": "/manifest-icon-192.maskable.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/manifest-icon-192.maskable.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "/manifest-icon-512.maskable.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/manifest-icon-512.maskable.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ],
+    "screenshots": [
+        {
+            "type": "image/png",
+            "src": "/screenshots/home.png"
+        },
+        {
+            "type": "image/png",
+            "src": "/screenshots/home.png"
+        },
+        {
+            "type": "image/png",
+            "src": "/screenshots/home.png"
+        }
+    ]
 }
