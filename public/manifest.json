@@ -10,7 +10,10 @@
     "display": "standalone",
     "display_override": [
         "standalone",
-        "browser"
+        "fullscreen",
+        "browser",
+        "window-controls-overlay",
+        "minimal-ui"
     ],
     "shortcuts": [
         {
@@ -57,11 +60,11 @@
         },
         {
             "type": "image/png",
-            "src": "/screenshots/home.png"
+            "src": "/screenshots/passkeys.png"
         },
         {
             "type": "image/png",
-            "src": "/screenshots/home.png"
+            "src": "/screenshots/add-passkey.png"
         }
     ],
     "categories": [
