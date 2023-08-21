@@ -19,5 +19,5 @@ module.exports = {
     v2_normalizeFormMethod: true,
     v2_routeConvention: true,
   },
-  serverDependenciesToBundle: ["@simplewebauthn/browser"],
+  serverDependenciesToBundle: ["@simplewebauthn/browser", "@remix-pwa/sw"],
 };

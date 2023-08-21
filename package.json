@@ -2,13 +2,18 @@
   "private": true,
   "sideEffects": false,
   "scripts": {
-    "build": "remix build",
-    "dev": "remix dev",
     "typecheck": "tsc",
-    "postinstall": "prisma generate"
+    "dev": "npm run worker:dev && npm run remix:dev",
+    "build": "npm run worker:build && npm run remix:build",
+    "remix:dev": "remix dev",
+    "remix:build": "remix build",
+    "postinstall": "prisma generate",
+    "worker:build": "node ./scripts/sw/build.mjs --prod",
+    "worker:dev": "node ./scripts/sw/build.mjs --dev"
   },
   "dependencies": {
     "@prisma/client": "^5.1.1",
+    "@remix-pwa/sw": "^1.1.3",
     "@remix-run/node": "^1.19.1",
     "@remix-run/react": "^1.19.1",
     "@remix-run/vercel": "^1.19.1",
@@ -36,6 +41,7 @@
     "@types/node": "^20.4.5",
     "@types/react": "^18.0.35",
     "@types/react-dom": "^18.0.11",
+    "esbuild": "^0.19.2",
     "eslint": "^8.38.0",
     "prisma": "^5.1.1",
     "remix-development-tools": "^1.4.1",
