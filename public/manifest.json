@@ -63,5 +63,10 @@
             "type": "image/png",
             "src": "/screenshots/home.png"
         }
+    ],
+    "categories": [
+        "security",
+        "utilities",
+        "education"
     ]
 }
