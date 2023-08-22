@@ -227,7 +227,11 @@ export const meta: V2_MetaFunction = () => [
 const isAuthPage = (request: Request) => {
   const { pathname } = new URL(request.url);
 
-  return pathname === "/login" || pathname === "/signup";
+  return (
+    pathname === "/login" ||
+    pathname === "/signup" ||
+    pathname === "/privacy-policy"
+  );
 };
 
 export const loader = async ({ request }: LoaderArgs) => {
