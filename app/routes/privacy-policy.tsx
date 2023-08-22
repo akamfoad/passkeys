@@ -1,6 +1,13 @@
+import { Link } from "@remix-run/react";
+
 const PrivacyPolicy = () => {
   return (
     <article className="max-w-xl mx-auto mt-20 prose">
+      <nav className="space-x-2 mb-8">
+        <Link className="text-emerald-800 hover:text-emerald-600 transition px-2 py-1 rounded-md" to="/">Passkeys</Link>
+        <span>/</span>
+        <span>Privacy Policy</span>
+      </nav>
       <h1>Passkeys</h1>
       <section>
         <h2>Introduction</h2>
