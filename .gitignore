@@ -12,3 +12,4 @@ node_modules
 /api/index.js.map
 /api/metafile.js.json
 /api/metafile.server.json
+/public/sw.js

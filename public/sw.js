@@ -2533,7 +2533,7 @@ var NetworkFirst = class extends CacheStrategy {
 };
 
 // app/entry.worker.ts
-var PRODUCT_VERSION = "b02dff1-dirty";
+var PRODUCT_VERSION = "8e5803a-dirty";
 self.addEventListener("install", (event) => {
   console.log("Service worker installed");
   event.waitUntil(self.skipWaiting());
@@ -2553,7 +2553,7 @@ var loaderCache = new NetworkFirst({
   cacheName: `loader-cache-${PRODUCT_VERSION}`,
   isLoader: true
 });
-var documentCache = new CacheFirst({
+var documentCache = new NetworkFirst({
   cacheName: `document-cache-${PRODUCT_VERSION}`
 });
 var fetchHandler = (e) => {
