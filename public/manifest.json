@@ -1,7 +1,7 @@
 {
   "id": "dev.akamfoad.passkeys",
-  "name": "Passkeys",
-  "short_name": "Passkeys",
+  "name": "Pass keys",
+  "short_name": "Pass keys",
   "lang": "en",
   "orientation": "portrait-primary",
   "description": "Passkey demonstration",
