@@ -34,6 +34,7 @@ const Navbar = () => {
           </>
         ) : (
           <>
+            <Link className="text-slate-300/80 text-sm" to="privacy-policy">Privacy Policy</Link>
             <Link to="signup">Sign up</Link>
             <Link
               to="login"
