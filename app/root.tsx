@@ -228,6 +228,7 @@ const isAuthPage = (request: Request) => {
   const { pathname } = new URL(request.url);
 
   return (
+    pathname === "/" ||
     pathname === "/login" ||
     pathname === "/signup" ||
     pathname === "/privacy-policy"
@@ -238,6 +239,15 @@ export const loader = async ({ request }: LoaderArgs) => {
   if (!isAuthPage(request)) {
     const { user } = await authenticate(request);
     return { user };
+  }
+
+  if (new URL(request.url).pathname === "/") {
+    try {
+      const { user } = await authenticate(request);
+      return { user };
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return { user: undefined };

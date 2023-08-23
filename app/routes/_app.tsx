@@ -4,8 +4,9 @@ import { Logout } from "~/icons/Logout";
 import { UserCircle } from "~/icons/UserCircle";
 
 const Navbar = () => {
-  const { user } = useRouteLoaderData("root");
   const fetcher = useFetcher();
+  const { user } = useRouteLoaderData("root");
+
   return (
     <header className="fixed inset-x-0 flex items-center justify-between h-14 px-4 sm:px-20 py-2 bg-slate-950 text-slate-50">
       <div>
@@ -14,20 +15,34 @@ const Navbar = () => {
         </Link>
       </div>
       <nav className="flex items-center gap-6">
-        {/* FIXME make this a floating menu and put settings and logout buttons there */}
-        <Link
-          className="flex items-center gap-2 text-slate-300 hover:text-slate-50 transition-colors"
-          to="/settings"
-        >
-          {user?.name}
-          <UserCircle />
-        </Link>
-        <fetcher.Form method="POST" action="/actions/logout">
-          <button className="flex items-center gap-2 text-slate-300 hover:text-slate-50 transition-colors">
-            Logout
-            <Logout />
-          </button>
-        </fetcher.Form>
+        {user !== undefined ? (
+          <>
+            {/* FIXME make this a floating menu and put settings and logout buttons there */}
+            <Link
+              className="flex items-center gap-2 text-slate-300 hover:text-slate-50 transition-colors"
+              to="/settings"
+            >
+              {user.name}
+              <UserCircle />
+            </Link>
+            <fetcher.Form method="POST" action="/actions/logout">
+              <button className="flex items-center gap-2 text-slate-300 hover:text-slate-50 transition-colors">
+                Logout
+                <Logout />
+              </button>
+            </fetcher.Form>
+          </>
+        ) : (
+          <>
+            <Link to="signup">Sign up</Link>
+            <Link
+              to="login"
+              className="py-0.5 px-4 bg-slate-50 text-black rounded-md"
+            >
+              login
+            </Link>
+          </>
+        )}
       </nav>
     </header>
   );
