@@ -222,6 +222,7 @@ export const meta: V2_MetaFunction = () => [
   { title: "Passkeys" },
   { name: "description", content: "Passkey demonstration" },
   { name: "apple-mobile-web-app-capable", content: "yes" },
+  { name: "viewport", content: "width=device-width, initial-scale=1" },
 ];
 
 const isAuthPage = (request: Request) => {
@@ -246,7 +247,7 @@ export const loader = async ({ request }: LoaderArgs) => {
       const { user } = await authenticate(request);
       return { user };
     } catch (error) {
-      console.log(error);
+      // console.log("hey",error);
     }
   }
 
@@ -257,7 +258,7 @@ export default function App() {
   useSWEffect();
 
   return (
-    <html lang="en">
+    <html lang="en" className="bg-white">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
