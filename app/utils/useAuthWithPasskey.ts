@@ -18,27 +18,25 @@ export const useAuthWithPasskey = () => {
 
     setPasskeyAuthMessage(null);
 
-    const resp = await fetch("/actions/passkeys/authentication");
-    const { options } = await resp.json();
+    let options;
+    try {
+      const resp = await fetch("/actions/passkeys/authentication");
+      const { options: authOptions } = await resp.json();
+      options = authOptions;
+    } catch {
+      setPasskeyAuthMessage(
+        "Failed to load necessary information to proceed login by passkey."
+      );
+    }
 
     let asseResp;
     try {
       asseResp = await startAuthentication(options, fromAutofill);
     } catch (error) {
       setAuthenticatingWithPasskey(false);
-      // if ((error as Error).name !== "NotAllowedError") {
-      //   setPasskeyAuthMessage(
-      //     "Failed to load necessary information to proceed login by passkey."
-      //   );
-      // }
-
-      setPasskeyAuthMessage(`
-              name: ${(error as Error).name}
-              
-              message: ${(error as Error).message}
-
-              stack: ${(error as Error).stack}
-      `);
+      if (error instanceof Error && error.name !== "NotAllowedError") {
+        setPasskeyAuthMessage(error.message);
+      }
     }
 
     if (asseResp === undefined) return;
