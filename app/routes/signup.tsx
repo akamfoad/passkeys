@@ -2,7 +2,7 @@ import { json, redirect } from "@remix-run/node";
 import type { ActionArgs } from "@remix-run/node";
 import { Form, Link, useActionData } from "@remix-run/react";
 
-import { Carausel } from "~/components/Carausel";
+import { Carousel } from "~/components/Carousel";
 
 import { db } from "~/utils/db.server";
 import { SignupSchema } from "~/shared/schema/auth";
@@ -61,7 +61,8 @@ const Signup = () => {
 
   return (
     <div className="min-h-screen grid grid-cols-2 gap-2">
-      <Carausel />
+      <Carousel message="The registration process is quick and easy, you'll create an account
+            under 2min." />
       <div className="flex flex-col items-center px-4 sm:px-0 col-span-2 md:col-span-1">
         <Form
           method="POST"

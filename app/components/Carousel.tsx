@@ -24,7 +24,7 @@ const TESTIMONIALS = [
   },
 ];
 
-export const Carausel = () => {
+export const Carousel = ({message}:{message: string}) => {
   const [isActive, setIsActive] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -52,13 +52,12 @@ export const Carausel = () => {
     <div className="p-6 hidden flex-col md:flex">
       <div className="bg-slate-100 flex flex-col items-start flex-1 rounded-lg p-16">
         <Icon height={40} />
-        <div className="mt-20 max-w-md">
+        <div className="mt-20 max-w-lg">
           <h1 className="font-semibold text-3xl">
             Let's elevate your online security to the next level.
           </h1>
           <p className="mt-8 mb-8 text-slate-500">
-            The registration process is quick and easy, you'll create an account
-            under 2min.
+            {message}
           </p>
         </div>
         <div className="mt-auto relative w-full h-[180px] overflow-hidden rounded-lg">
@@ -66,7 +65,7 @@ export const Carausel = () => {
             <div
               key={i}
               className={classNames(
-                "bg-slate-950/80 rounded-lg p-4 text-slate-100 max-w-md left-0 right-0 mx-auto",
+                "bg-slate-950/80 rounded-lg p-4 text-slate-100 max-w-lg left-0 right-0 mx-auto",
                 "absolute duration-200 transition-all",
                 {
                   "opacity-100 scale-x-100 delay-100": currentIndex === i,
