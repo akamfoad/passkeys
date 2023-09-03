@@ -16,26 +16,32 @@ export const useAuthWithPasskey = () => {
       setAuthenticatingWithPasskey(true);
     }
 
+    setPasskeyAuthMessage(null);
+
     let options;
     try {
       const resp = await fetch("/actions/passkeys/authentication");
       const { options: authOptions } = await resp.json();
       options = authOptions;
     } catch {
-      setPasskeyAuthMessage(
-        "Failed to load necessary information to proceed login by passkey."
-      );
-    }
+      if (!fromAutofill) {
+        setPasskeyAuthMessage(
+          "Failed to load necessary information to proceed login by passkey."
+        );
+      }
 
-    setPasskeyAuthMessage(null);
+      return;
+    }
 
     let asseResp;
     try {
       asseResp = await startAuthentication(options, fromAutofill);
     } catch (error) {
-      setAuthenticatingWithPasskey(false);
-      if (error instanceof Error && error.name !== "NotAllowedError") {
-        setPasskeyAuthMessage(error.message);
+      if (!fromAutofill) {
+        setAuthenticatingWithPasskey(false);
+        if (error instanceof Error && error.name !== "NotAllowedError") {
+          setPasskeyAuthMessage(error.message);
+        }
       }
     }
 
@@ -57,14 +63,16 @@ export const useAuthWithPasskey = () => {
       setTimeout(() => {
         window.location.pathname = "/";
       }, 250);
-    } else {
+    } else if (!fromAutofill) {
       setPasskeyAuthMessage(
         verificationJSON?.message ||
           "Something went wrong while trying to authenticate user"
       );
     }
 
-    setAuthenticatingWithPasskey(false);
+    if (!fromAutofill) {
+      setAuthenticatingWithPasskey(false);
+    }
   };
 
   useEffect(() => {
