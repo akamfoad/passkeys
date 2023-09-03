@@ -8,6 +8,7 @@ import { authenticate } from "~/utils/auth.server";
 import { db } from "~/utils/db.server";
 import type { Authenticator } from "~/utils/passkeys.server";
 import { rpID, rpName, rpOrigin } from "~/utils/passkeys.server";
+import { base64EncodeURL } from "~/utils/base64.server";
 
 export const loader = async ({ request }: LoaderArgs) => {
   const { user } = await authenticate(request);
@@ -80,7 +81,7 @@ export const action = async ({ request }: ActionArgs) => {
         credentialBackedUp,
         credentialDeviceType,
         credentialPublicKey: Buffer.from(credentialPublicKey),
-        credentialID: Buffer.from(credentialID).toString("base64"),
+        credentialID: base64EncodeURL(credentialID),
       },
     });
   }

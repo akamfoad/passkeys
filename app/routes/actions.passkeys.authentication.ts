@@ -18,9 +18,8 @@ export const loader = async () => {
 
 export const action = async ({ request }: ActionArgs) => {
   const { asseResp: body, challenge: expectedChallenge } = await request.json();
-  const credentialID = (body.id + "=").split("_").join("/");
   const authenticator = (await db.authenticator.findUnique({
-    where: { credentialID },
+    where: { credentialID: body.id },
   })) as unknown as Authenticator;
 
   if (!authenticator) {
@@ -49,7 +48,7 @@ export const action = async ({ request }: ActionArgs) => {
 
   if (verified && authenticationInfo !== undefined) {
     const { userId } = await db.authenticator.update({
-      where: { credentialID },
+      where: { credentialID: body.id },
       data: { counter: authenticationInfo.newCounter },
       select: { userId: true },
     });
