@@ -208,7 +208,7 @@ const Login = () => {
                   type="button"
                   disabled={authenticatingWithPasskey}
                   className={classNames(
-                    "flex items-center justify-center absolute right-3 inset-y-0 my-auto",
+                    "flex items-center justify-center absolute w-8 h-8 right-3 inset-y-0 my-auto",
                     "aspect-square p-2 rounded-lg text-slate-600 hover:bg-slate-500/10",
                     {
                       "bg-slate-500/10": authenticatingWithPasskey,
