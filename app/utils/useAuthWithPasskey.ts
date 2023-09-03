@@ -83,7 +83,6 @@ export const useAuthWithPasskey = () => {
     }
 
     setAuthenticatingWithPasskey(false);
-    setPasskeyAuthMessage(null);
   };
 
   return { authenticatingWithPasskey, passkeyAuthMessage, loginWithPasskeys };
