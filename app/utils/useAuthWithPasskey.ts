@@ -60,9 +60,7 @@ export const useAuthWithPasskey = () => {
 
     // Show UI appropriate for the `verified` status
     if (verificationJSON && verificationJSON.verified) {
-      setTimeout(() => {
-        window.location.pathname = "/";
-      }, 250);
+      window.location.pathname = "/";
     } else if (!fromAutofill) {
       setPasskeyAuthMessage(
         verificationJSON?.message ||
