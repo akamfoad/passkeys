@@ -53,7 +53,7 @@ export const action = async ({ request }: ActionArgs) => {
 
 const Login = () => {
   const navigation = useNavigation();
-  const { authenticatingWithPasskey, passkeyAuthMessage, loginWithPasskeys } =
+  const { authenticatingWithPasskey, passkeyAuthMessage, startLoginWithPasskeys } =
     useAuthWithPasskey();
   const congratulateeRef = useRef<HTMLDivElement | null>(null);
   const errors = useActionData<typeof action>();
@@ -147,7 +147,7 @@ const Login = () => {
                   autoComplete="email username webauthn"
                 />
                 <button
-                  onClick={loginWithPasskeys}
+                  onClick={startLoginWithPasskeys}
                   type="button"
                   disabled={authenticatingWithPasskey}
                   className={classNames(
