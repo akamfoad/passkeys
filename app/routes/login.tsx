@@ -14,12 +14,10 @@ import { db } from "~/utils/db.server";
 import { LoginSchema } from "~/shared/schema/auth";
 import { isPasswordMatch } from "~/utils/password.server";
 import { tokenCookie } from "~/utils/token.server";
-import {
-  browserSupportsWebAuthnAutofill,
-  startAuthentication,
-} from "@simplewebauthn/browser";
+
 import { Icon } from "~/icons/App";
 import { Carousel } from "~/components/Carousel";
+import { useAuthWithPasskey } from "~/utils/useAuthWithPasskey";
 
 export const action = async ({ request }: ActionArgs) => {
   const requestData = await request.formData();
@@ -55,14 +53,11 @@ export const action = async ({ request }: ActionArgs) => {
 
 const Login = () => {
   const navigation = useNavigation();
+  const { authenticatingWithPasskey, passkeyAuthMessage, loginWithPasskeys } =
+    useAuthWithPasskey();
   const congratulateeRef = useRef<HTMLDivElement | null>(null);
   const errors = useActionData<typeof action>();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [authenticatingWithPasskey, setAuthenticatingWithPasskey] =
-    useState(false);
-  const [passkeyAuthMessage, setPasskeyAuthMessage] = useState<string | null>(
-    null
-  );
   const loginFormAction = useFormAction(".", { relative: "path" });
   const [congratulatee, setCongratulatee] = useState(
     searchParams.get("congratulations")
@@ -90,81 +85,8 @@ const Login = () => {
     }
   }, [congratulatee]);
 
-  useEffect(() => {
-    browserSupportsWebAuthnAutofill().then((supported) => {
-      if (supported) {
-        (async () => {
-          fetch("/actions/passkeys/authentication")
-            .then((res) => res.json())
-            .then(({ options }) => {
-              startAuthentication(options, true).then((asseResp) =>
-                fetch("/actions/passkeys/authentication", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    asseResp,
-                    challenge: options.challenge,
-                  }),
-                  redirect: "follow",
-                })
-              );
-            })
-            .catch(console.error);
-        })();
-      }
-    });
-  }, []);
-
   const isLoggingIn =
     navigation.state !== "idle" && navigation.formAction === loginFormAction;
-
-  const loginWithPasskeys = async () => {
-    setAuthenticatingWithPasskey(true);
-
-    const resp = await fetch("/actions/passkeys/authentication");
-    const { options } = await resp.json();
-
-    let asseResp;
-    try {
-      asseResp = await startAuthentication(options);
-    } catch (error) {
-      setAuthenticatingWithPasskey(false);
-      if ((error as Error).name !== "NotAllowedError") {
-        setPasskeyAuthMessage(
-          "Failed to load necessary information to proceed login by passkey."
-        );
-      }
-    }
-
-    if (asseResp === undefined) return;
-
-    const verificationResp = await fetch("/actions/passkeys/authentication", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ asseResp, challenge: options.challenge }),
-    });
-
-    // Wait for the results of verification
-    const verificationJSON = await verificationResp.json();
-
-    // Show UI appropriate for the `verified` status
-    if (verificationJSON && verificationJSON.verified) {
-      setTimeout(() => {
-        window.location.pathname = "/";
-      }, 250);
-    } else {
-      setPasskeyAuthMessage(
-        verificationJSON?.message ||
-          "Something went wrong while trying to authenticate user"
-      );
-    }
-
-    setAuthenticatingWithPasskey(false);
-  };
 
   return (
     <div className="min-h-screen grid grid-cols-2 gap-2">
