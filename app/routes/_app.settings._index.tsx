@@ -61,7 +61,7 @@ const GeneralSettings = () => {
           <Input
             name="name"
             defaultValue={user.name}
-            className="w-full lg:w-1/3  bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50"
+            className="max-w-sm w-full bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50"
             autoComplete="name"
           />
           <p className="mt-1 text-rose-500 text-sm font-medium">
@@ -73,7 +73,7 @@ const GeneralSettings = () => {
           <Input
             name="email"
             defaultValue={user.email}
-            className="w-full lg:w-1/3  bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-950/50 placeholder:select-none pointer-events-none"
+            className="max-w-sm w-full bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-950/50 placeholder:select-none pointer-events-none"
             disabled
             readOnly
           />
@@ -81,7 +81,7 @@ const GeneralSettings = () => {
             Changing your email address currently is not supported.
           </p>
         </div>
-        <button className="px-5 py-2 bg-emerald-700 rounded-lg self-center text-white font-medium">
+        <button className="px-5 py-2 bg-emerald-950 rounded-lg self-center text-white font-medium">
           {isSaving ? "Saving..." : "Save"}
         </button>
       </Form>

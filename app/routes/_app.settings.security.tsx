@@ -111,7 +111,7 @@ const SecuritySettings = () => {
             type="password"
             name="currentPassword"
             autoComplete="current-password"
-            className="w-full lg:w-1/3  bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50"
+            className="max-w-sm w-full bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50"
           />
           <p className="mt-1 text-rose-500 text-sm font-medium">
             &nbsp;{errors?.currentPassword?.[0]}
@@ -123,7 +123,7 @@ const SecuritySettings = () => {
             type="password"
             name="newPassword"
             autoComplete="new-password"
-            className="w-full lg:w-1/3  bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50"
+            className="max-w-sm w-full bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50"
           />
           <p className="mt-1 text-rose-500 text-sm font-medium">
             &nbsp;{errors?.newPassword?.[0]}
@@ -135,13 +135,13 @@ const SecuritySettings = () => {
             type="password"
             name="confirmNewPassword"
             autoComplete="new-password"
-            className="w-full lg:w-1/3  bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50"
+            className="max-w-sm w-full bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50"
           />
           <p className="mt-1 text-rose-500 text-sm font-medium">
             &nbsp;{errors?.confirmNewPassword?.[0]}
           </p>
         </div>
-        <button className="px-5 py-2 bg-emerald-700 rounded-lg self-center text-white font-medium">
+        <button className="px-5 py-2 bg-emerald-950 rounded-lg self-center text-white font-medium">
           {isSaving ? "Saving..." : "Save"}
         </button>
       </Form>

@@ -16,7 +16,7 @@ const NavLinkC = ({
       end
       className={({ isActive }) =>
         classNames(
-          "flex items-center gap-1.5 px-3 py-2 rounded-md transition-all",
+          "flex items-center gap-1.5 px-3 py-2 rounded-md transition-all max-w-sm",
           {
             "bg-slate-50/60 font-medium": isActive,
             "hover:bg-slate-50/40": !isActive,

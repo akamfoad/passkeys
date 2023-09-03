@@ -103,7 +103,7 @@ const AddPasskey = () => {
         ) : (
           <button
             className={classNames(
-              "px-5 py-2 bg-emerald-700 rounded-lg self-center text-white font-medium",
+              "px-5 py-2 bg-emerald-950 rounded-lg self-center text-white font-medium",
               { "opacity-70": isCreating }
             )}
             onClick={generatePasskey}
