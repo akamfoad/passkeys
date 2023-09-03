@@ -18,13 +18,19 @@ export const loader = async () => {
 
 export const action = async ({ request }: ActionArgs) => {
   const { asseResp: body, challenge: expectedChallenge } = await request.json();
+  if (!body.id) {
+    return json(
+      { error: `'id' is required, ${body.id} was provided` },
+      { status: 400 }
+    );
+  }
   const authenticator = (await db.authenticator.findUnique({
     where: { credentialID: body.id },
   })) as unknown as Authenticator;
 
   if (!authenticator) {
     throw json(
-      { message: `Could not find authenticator ${body.id}` },
+      { message: "Couldn't find any match for the provided passkey, make sure to use a passkey connected to your account." },
       { status: 401 }
     );
   }

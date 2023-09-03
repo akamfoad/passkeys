@@ -60,6 +60,9 @@ const Login = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [authenticatingWithPasskey, setAuthenticatingWithPasskey] =
     useState(false);
+  const [passkeyAuthMessage, setPasskeyAuthMessage] = useState<string | null>(
+    null
+  );
   const loginFormAction = useFormAction(".", { relative: "path" });
   const [congratulatee, setCongratulatee] = useState(
     searchParams.get("congratulations")
@@ -128,8 +131,14 @@ const Login = () => {
       asseResp = await startAuthentication(options);
     } catch (error) {
       setAuthenticatingWithPasskey(false);
-      throw error;
+      if ((error as Error).name !== "NotAllowedError") {
+        setPasskeyAuthMessage(
+          "Failed to load necessary information to proceed login by passkey."
+        );
+      }
     }
+
+    if (asseResp === undefined) return;
 
     const verificationResp = await fetch("/actions/passkeys/authentication", {
       method: "POST",
@@ -147,6 +156,11 @@ const Login = () => {
       setTimeout(() => {
         window.location.pathname = "/";
       }, 250);
+    } else {
+      setPasskeyAuthMessage(
+        verificationJSON?.message ||
+          "Something went wrong while trying to authenticate user"
+      );
     }
 
     setAuthenticatingWithPasskey(false);
@@ -186,6 +200,13 @@ const Login = () => {
                 className={classNames("px-4 py-2 bg-rose-500/20 rounded-lg")}
               >
                 {errors.message}
+              </div>
+            )}
+            {passkeyAuthMessage !== null && (
+              <div
+                className={classNames("px-4 py-2 bg-rose-500/20 rounded-lg")}
+              >
+                {passkeyAuthMessage}
               </div>
             )}
           </div>
