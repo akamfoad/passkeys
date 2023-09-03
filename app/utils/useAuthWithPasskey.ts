@@ -11,7 +11,7 @@ export const useAuthWithPasskey = () => {
     null
   );
 
-  const loginWithPasskeys = async () => {
+  const loginWithPasskeys = async (fromAutofill?: boolean) => {
     setPasskeyAuthMessage(null);
     setAuthenticatingWithPasskey(true);
 
@@ -20,7 +20,7 @@ export const useAuthWithPasskey = () => {
 
     let asseResp;
     try {
-      asseResp = await startAuthentication(options);
+      asseResp = await startAuthentication(options, fromAutofill);
     } catch (error) {
       setAuthenticatingWithPasskey(false);
       if ((error as Error).name !== "NotAllowedError") {
@@ -60,9 +60,13 @@ export const useAuthWithPasskey = () => {
 
   useEffect(() => {
     browserSupportsWebAuthnAutofill().then((supported) => {
-      if (supported) loginWithPasskeys();
+      if (supported) loginWithPasskeys(true);
     });
   }, []);
 
-  return { authenticatingWithPasskey, passkeyAuthMessage, loginWithPasskeys };
+  return {
+    authenticatingWithPasskey,
+    passkeyAuthMessage,
+    startLoginWithPasskeys: () => loginWithPasskeys(),
+  };
 };
