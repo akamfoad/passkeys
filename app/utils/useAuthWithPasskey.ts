@@ -16,8 +16,6 @@ export const useAuthWithPasskey = () => {
       setAuthenticatingWithPasskey(true);
     }
 
-    setPasskeyAuthMessage(null);
-
     let options;
     try {
       const resp = await fetch("/actions/passkeys/authentication");
@@ -28,6 +26,8 @@ export const useAuthWithPasskey = () => {
         "Failed to load necessary information to proceed login by passkey."
       );
     }
+
+    setPasskeyAuthMessage(null);
 
     let asseResp;
     try {
