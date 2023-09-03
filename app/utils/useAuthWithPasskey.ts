@@ -11,33 +11,6 @@ export const useAuthWithPasskey = () => {
     null
   );
 
-  useEffect(() => {
-    browserSupportsWebAuthnAutofill().then((supported) => {
-      if (supported) {
-        (async () => {
-          fetch("/actions/passkeys/authentication")
-            .then((res) => res.json())
-            .then(({ options }) => {
-              startAuthentication(options, true).then((asseResp) =>
-                fetch("/actions/passkeys/authentication", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    asseResp,
-                    challenge: options.challenge,
-                  }),
-                  redirect: "follow",
-                })
-              );
-            })
-            .catch(console.error);
-        })();
-      }
-    });
-  }, []);
-
   const loginWithPasskeys = async () => {
     setPasskeyAuthMessage(null);
     setAuthenticatingWithPasskey(true);
@@ -84,6 +57,12 @@ export const useAuthWithPasskey = () => {
 
     setAuthenticatingWithPasskey(false);
   };
+
+  useEffect(() => {
+    browserSupportsWebAuthnAutofill().then((supported) => {
+      if (supported) loginWithPasskeys();
+    });
+  }, []);
 
   return { authenticatingWithPasskey, passkeyAuthMessage, loginWithPasskeys };
 };
