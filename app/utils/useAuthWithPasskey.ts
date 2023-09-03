@@ -12,8 +12,10 @@ export const useAuthWithPasskey = () => {
   );
 
   const loginWithPasskeys = async (fromAutofill?: boolean) => {
-    setPasskeyAuthMessage(null);
-    setAuthenticatingWithPasskey(true);
+    if(!fromAutofill){
+      setPasskeyAuthMessage(null);
+      setAuthenticatingWithPasskey(true);
+    }
 
     const resp = await fetch("/actions/passkeys/authentication");
     const { options } = await resp.json();
