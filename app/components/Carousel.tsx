@@ -12,7 +12,7 @@ const TESTIMONIALS = [
   },
   {
     text: "voluptas aliquid quod officia, accusantium veniam modi, laudantium reprehenderit soluta perspiciatis id molestias? Error, exercitationem?",
-    name: "Akam Foad",
+    name: "Ahmed Nehmat",
     position: "Lead Frontend Developer",
     avatar: "https://avatars.githubusercontent.com/u/51075069?v=4",
   },
