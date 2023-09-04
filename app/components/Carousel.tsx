@@ -13,7 +13,7 @@ const TESTIMONIALS = [
   {
     text: "voluptas aliquid quod officia, accusantium veniam modi, laudantium reprehenderit soluta perspiciatis id molestias? Error, exercitationem?",
     name: "Ahmed Nehmat",
-    position: "Lead Frontend Developer",
+    position: "Frontend Developer",
     avatar: "https://avatars.githubusercontent.com/u/51075069?v=4",
   },
   {
