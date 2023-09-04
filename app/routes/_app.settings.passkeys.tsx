@@ -172,6 +172,7 @@ const PasskeysSettings = () => {
                             name="passkeyName"
                             defaultValue={name || ""}
                             className="text-base max-w-sm w-full border border-neutral-300 bg-neutral-100 disabled:bg-slate-50/50 disabled:text-gray-600/50 rounded-md px-1.5 py-0.5"
+                            autoFocus
                           />
                           <button
                             onClick={() => setIsEditing(true)}
