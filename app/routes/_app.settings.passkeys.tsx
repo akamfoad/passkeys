@@ -15,14 +15,14 @@ import { browserSupportsWebAuthn } from "@simplewebauthn/browser";
 import { Icon } from "~/icons/App";
 import { db } from "~/utils/db.server";
 import { authenticate } from "~/utils/auth.server";
+import { PencilIcon } from "~/icons/Pencil";
+import { Spinner } from "~/components/Spinner";
+import Trash from "~/icons/Trash";
+import classNames from "classnames";
 
 export const loader = async ({ request }: LoaderArgs) => {
   const { user } = await authenticate(request);
 
-  // FIXME add name, createdAt and last used
-  // Also if possible see if the passkey
-  // Also add support for changing name, and also
-  // deleting the passkey
   const authenticators = await db.authenticator.findMany({
     where: { userId: user.id },
     select: {
@@ -44,33 +44,69 @@ const DeletePasskeySchema = z
   })
   .required();
 
-export const action = async ({ request }: ActionArgs) => {
-  const { user } = await authenticate(request);
-  if (request.method.toUpperCase() !== "DELETE") {
-    throw json({ message: "Method not allowed" }, { status: 405 });
-  }
+const RenamePasskeySchema = z
+  .object({
+    id: z.string().nonempty("Passkey ID is required"),
+    passkeyName: z.string().nonempty("Passkey name is required"),
+  })
+  .required();
 
+const handlePasskeyDelete = async (request: Request, userId: number) => {
   try {
     const formData = await request.formData();
     const { id } = DeletePasskeySchema.parse(Object.fromEntries(formData));
-    await db.authenticator.delete({ where: { id, userId: user.id } });
+    await db.authenticator.delete({ where: { id, userId } });
 
     return new Response(undefined, { status: 204 });
   } catch (error) {
     if (error instanceof ZodError) {
-      return json({ errors: error.flatten().fieldErrors });
+      return json({ errors: error.flatten().fieldErrors }, { status: 400 });
     }
 
     throw json({ message: "Something went wrong" }, { status: 500 });
   }
 };
 
+const handlePasskeyRename = async (request: Request, userId: number) => {
+  try {
+    const formData = await request.formData();
+    const { id, passkeyName } = RenamePasskeySchema.parse(
+      Object.fromEntries(formData)
+    );
+    await db.authenticator.update({
+      where: { id, userId },
+      data: { name: passkeyName },
+    });
+
+    return new Response(undefined, { status: 204 });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return json({ errors: error.flatten().fieldErrors }, { status: 400 });
+    }
+
+    throw json({ message: "Something went wrong" }, { status: 500 });
+  }
+};
+
+export const action = async ({ request }: ActionArgs) => {
+  const { user } = await authenticate(request);
+  switch (request.method.toUpperCase()) {
+    case "DELETE":
+      return handlePasskeyDelete(request, user.id);
+    case "POST":
+      return handlePasskeyRename(request, user.id);
+    default:
+      throw json({ message: "Method not allowed" }, { status: 405 });
+  }
+};
+
 const PasskeysSettings = () => {
   const navigation = useNavigation();
-  const { passkeys } = useLoaderData<typeof loader>();
   const formAction = useFormAction();
+  const { passkeys } = useLoaderData<typeof loader>();
 
   const [isPasskeySupported, setIsPasskeySupported] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     setIsPasskeySupported(browserSupportsWebAuthn());
@@ -89,15 +125,30 @@ const PasskeysSettings = () => {
           </Link>
         )}
       </header>
-      {!isPasskeySupported && <p>Your browser doesn't support Passkeys :(</p>}
+      {!isPasskeySupported && (
+        <p className="my-4">Your browser doesn't support Passkeys :(</p>
+      )}
       {Array.isArray(passkeys) && (
         <ul className="flex flex-col gap-5">
           {passkeys.map(
             ({ id, name, createdAt, lastUsedAt, credentialBackedUp }) => {
-              const isDeleting =
+              const isSubmitting =
                 navigation.state !== "idle" &&
                 navigation.formAction === formAction &&
                 navigation.formData?.get("id") === id;
+
+              const isDeleting =
+                isSubmitting && navigation.formMethod === "DELETE";
+
+              const isRenaming =
+                isSubmitting && navigation.formMethod === "POST";
+
+              let passkeyName = name;
+
+              if (isRenaming) {
+                passkeyName = navigation.formData?.get("passkeyName") as string;
+              }
+
               return (
                 <li
                   key={id}
@@ -108,14 +159,50 @@ const PasskeysSettings = () => {
                       <Icon height={24} />
                     </div>
                     <div>
-                      <h2>
-                        <span className="font-medium">{name}</span>
-                        {credentialBackedUp && (
-                          <span className="ms-2 text-xs font-li px-1.5 py-1 rounded-full bg-sky-500/20 text-sky-950">
-                            Synced
-                          </span>
-                        )}
-                      </h2>
+                      {isEditing && !isRenaming ? (
+                        <Form
+                          method="POST"
+                          encType="multipart/form-data"
+                          className="flex items-center gap-2"
+                          onSubmit={() => setIsEditing(false)}
+                        >
+                          <input type="hidden" name="id" value={id} />
+                          <input
+                            required
+                            name="passkeyName"
+                            defaultValue={name || ""}
+                            className="text-base max-w-sm w-full border border-neutral-300 bg-neutral-100 disabled:bg-slate-50/50 disabled:text-gray-600/50 rounded-md px-1.5 py-0.5"
+                          />
+                          <button
+                            onClick={() => setIsEditing(true)}
+                            className={classNames(
+                              "px-2 py-1 flex items-center justify-center text-sm rounded-md",
+                              "bg-gray-300  hover:bg-gray-400/50 transition-colors"
+                            )}
+                          >
+                            Save
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setIsEditing(false)}
+                            className={classNames(
+                              "px-2 py-1 flex items-center justify-center text-sm rounded-md",
+                              "hover:bg-gray-300/50 transition-colors"
+                            )}
+                          >
+                            Cancel
+                          </button>
+                        </Form>
+                      ) : (
+                        <h2>
+                          <span className="font-medium">{passkeyName}</span>
+                          {credentialBackedUp && (
+                            <span className="ms-2 text-xs font-li px-1.5 py-1 rounded-full bg-sky-500/20 text-sky-950">
+                              Synced
+                            </span>
+                          )}
+                        </h2>
+                      )}
                       <p className="text-sm font-light text-slate-800 mt-2">
                         <span>
                           Added on{" "}
@@ -131,10 +218,31 @@ const PasskeysSettings = () => {
                       </p>
                     </div>
                   </div>
-                  <Form method="DELETE" encType="multipart/form-data">
+                  <Form
+                    method="DELETE"
+                    encType="multipart/form-data"
+                    className={classNames("flex items-center gap-2", {
+                      collapse: isEditing,
+                    })}
+                  >
                     <input type="hidden" name="id" value={id} />
-                    <button className="text-sm font-light text-rose-600 px-2 py-1.5 rounded-md">
-                      {isDeleting ? "Removing..." : "Remove"}
+                    <button
+                      type="button"
+                      onClick={() => setIsEditing(true)}
+                      className={classNames(
+                        "w-8 h-8 flex items-center justify-center text-sm font-light bg-gray-300/50  border border-gray-900/50 p-1.5 rounded-md",
+                        "hover:bg-gray-300 transition-colors"
+                      )}
+                    >
+                      {isDeleting ? <Spinner /> : <PencilIcon height={18} />}
+                    </button>
+                    <button
+                      className={classNames(
+                        "w-8 h-8 flex items-center justify-center text-sm font-light bg-gray-300/50  border border-gray-900/50  text-rose-600 p-1.5 rounded-md",
+                        "hover:bg-rose-700 hover:text-white hover:border-transparent transition-colors"
+                      )}
+                    >
+                      {isDeleting ? <Spinner /> : <Trash height={18} />}
                     </button>
                   </Form>
                 </li>
