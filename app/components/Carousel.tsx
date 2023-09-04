@@ -24,7 +24,7 @@ const TESTIMONIALS = [
   },
 ];
 
-export const Carousel = ({message}:{message: string}) => {
+export const Carousel = ({ message }: { message: string }) => {
   const [isActive, setIsActive] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -56,9 +56,7 @@ export const Carousel = ({message}:{message: string}) => {
           <h1 className="font-semibold text-3xl">
             Let's elevate your online security to the next level.
           </h1>
-          <p className="mt-8 mb-8 text-slate-500">
-            {message}
-          </p>
+          <p className="mt-8 mb-8 text-slate-500">{message}</p>
         </div>
         <div className="mt-auto relative w-full h-[180px] overflow-hidden rounded-lg">
           {TESTIMONIALS.map(({ name, position, avatar, text }, i) => (
@@ -86,22 +84,22 @@ export const Carousel = ({message}:{message: string}) => {
 
           <div className="absolute bottom-0 flex gap-2 items-center justify-center left-1/2 -translate-x-1/2">
             {TESTIMONIALS.map((_, i) => (
-              <button
+              <input
+                type="radio"
+                name="carousel"
                 key={i}
                 onClick={() => {
                   setCurrentIndex(i);
                   if (isActive) setIsActive(false);
                 }}
                 className={classNames(
-                  "w-3 h-3 rounded-full border-2 transition-all",
+                  "appearance-none w-3 h-3 rounded-full border-2 transition-all",
                   {
-                    "bg-emerald-950 border-transparent": currentIndex === i,
-                    "border-emerald-950": currentIndex !== i,
+                    "bg-emerald-950 border-transparent cursor-auto": currentIndex === i,
+                    "border-emerald-950 cursor-pointer": currentIndex !== i,
                   }
                 )}
-              >
-                {" "}
-              </button>
+              />
             ))}
           </div>
         </div>
