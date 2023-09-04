@@ -23,7 +23,7 @@ export const LoginSchema = z
   })
   .required();
 
-export const SignupSchema = z
+export const RegisterSchema = z
   .object({
     name: nameSchema,
     email: emailSchema,

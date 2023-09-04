@@ -4,8 +4,8 @@ export const Email = ({ name, url }: { name: string; url: string }) => {
       <body>
         <p>Welcome to Passkeys {name}</p>
         <p>
-          Click
-          <a href={url}>Verify</a> to finish sign up process.
+          Click 
+          <a href={url}>Verify</a> to finish registering process.
         </p>
       </body>
     </html>

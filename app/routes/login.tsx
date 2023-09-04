@@ -198,8 +198,8 @@ const Login = () => {
           </button>
           <p className="text-center mt-4">
             Don't have an account?
-            <Link className="ms-2 p-2 rounded-lg" to="/signup">
-              Sign up
+            <Link className="ms-2 p-2 rounded-lg" to="/register">
+              Register
             </Link>
           </p>
         </Form>

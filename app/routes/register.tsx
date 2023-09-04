@@ -5,14 +5,14 @@ import { Form, Link, useActionData } from "@remix-run/react";
 import { Carousel } from "~/components/Carousel";
 
 import { db } from "~/utils/db.server";
-import { SignupSchema } from "~/shared/schema/auth";
+import { RegisterSchema } from "~/shared/schema/auth";
 import { getRandomHash } from "~/utils/crypto.server";
 import { encryptPassword } from "~/utils/password.server";
 import { sendVerificationEmail } from "~/utils/email.server";
 
 export const action = async ({ request }: ActionArgs) => {
   const requestData = await request.formData();
-  const parseResult = SignupSchema.safeParse(Object.fromEntries(requestData));
+  const parseResult = RegisterSchema.safeParse(Object.fromEntries(requestData));
 
   if (!parseResult.success) {
     return json(parseResult.error.flatten().fieldErrors, { status: 400 });
@@ -56,7 +56,7 @@ export const action = async ({ request }: ActionArgs) => {
   throw redirect(`/verify?${searchParams.toString()}`);
 };
 
-const Signup = () => {
+const Register = () => {
   const errors = useActionData<typeof action>();
 
   return (
@@ -124,7 +124,7 @@ const Signup = () => {
             </p>
           </div>
           <button className="mt-6 px-5 py-2 bg-emerald-950 rounded-lg text-white font-medium">
-            Sign up
+            Register
           </button>
           <p className="text-center mt-4">
             Already have an account?
@@ -138,4 +138,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default Register;
