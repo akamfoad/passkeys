@@ -17,6 +17,12 @@ model User {
   isVerified       Boolean         @default(false)
   currentChallenge String?         @unique @db.VarChar(255)
   authenticators   Authenticator[]
+
+  otp_enabled  Boolean @default(false)
+  otp_verified Boolean @default(false)
+
+  otp_hex      String?
+  otp_auth_url String?
 }
 
 model Authenticator {

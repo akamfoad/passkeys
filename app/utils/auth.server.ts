@@ -7,7 +7,18 @@ export const authenticate = async (
   {
     withPassword = undefined,
     withChallenge = undefined,
-  }: { withPassword?: true; withChallenge?: true } = {}
+    withOtpSecret = undefined,
+    withOtpVerified = undefined,
+    withOtpAuthUrl = undefined,
+    withOtpEnabled = undefined
+  }: {
+    withPassword?: true;
+    withChallenge?: true;
+    withOtpSecret?: true;
+    withOtpVerified?: true;
+    withOtpAuthUrl?: true;
+    withOtpEnabled?: true;
+  } = {}
 ) => {
   const id = await tokenCookie.parse(request.headers.get("Cookie"));
 
@@ -23,6 +34,10 @@ export const authenticate = async (
       email: true,
       password: withPassword === true,
       currentChallenge: withChallenge === true,
+      otp_hex: withOtpSecret === true,
+      otp_verified: withOtpVerified === true,
+      otp_auth_url: withOtpAuthUrl === true,
+      otp_enabled: withOtpEnabled === true,
     },
   });
 

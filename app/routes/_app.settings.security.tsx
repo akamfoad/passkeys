@@ -1,18 +1,21 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import { z } from "zod";
 import {
   Form,
+  Link,
   useActionData,
   useFormAction,
   useLoaderData,
   useNavigation,
 } from "@remix-run/react";
-import { z } from "zod";
+import { json } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+
 import { Input } from "~/components/Input";
-import { authenticate } from "~/utils/auth.server";
+
 import { db } from "~/utils/db.server";
-import { encryptPassword, isPasswordMatch } from "~/utils/password.server";
 import { useDebounce } from "~/utils/useDebounce";
+import { authenticate } from "~/utils/auth.server";
+import { encryptPassword, isPasswordMatch } from "~/utils/password.server";
 
 const passwordSchema = z
   .object({
@@ -49,14 +52,14 @@ const passwordSchema = z
 
 export const loader = async ({ request }: LoaderArgs) => {
   const {
-    user: { email },
-  } = await authenticate(request);
+    user: { email, otp_enabled },
+  } = await authenticate(request, { withOtpEnabled: true });
 
-  return { email };
+  return { email, otp_enabled };
 };
 
 export const action = async ({ request }: ActionArgs) => {
-  const { user } = await authenticate(request, {withPassword: true});
+  const { user } = await authenticate(request, { withPassword: true });
 
   const formData = await request.formData();
 
@@ -93,7 +96,7 @@ export const action = async ({ request }: ActionArgs) => {
 const SecuritySettings = () => {
   const navigation = useNavigation();
   const errors = useActionData<typeof action>();
-  const { email } = useLoaderData<typeof loader>();
+  const { email, otp_enabled } = useLoaderData<typeof loader>();
   const formAction = useFormAction(".");
   const isSaving = useDebounce({
     value: navigation.state !== "idle" && navigation.formAction === formAction,
@@ -103,48 +106,69 @@ const SecuritySettings = () => {
 
   return (
     <section>
-      <Form method="POST" className="space-y-4">
-        <input type="hidden" name="email" value={email} hidden />
-        <div className="space-y-1">
-          <label className="min-w-[80px]">Current Password:</label>
-          <Input
-            type="password"
-            name="currentPassword"
-            autoComplete="current-password"
-            className="max-w-sm w-full bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50"
-          />
-          <p className="mt-1 text-rose-500 text-sm font-medium">
-            &nbsp;{errors?.currentPassword?.[0]}
-          </p>
-        </div>
-        <div className="space-y-1">
-          <label className="min-w-[80px]">New Password:</label>
-          <Input
-            type="password"
-            name="newPassword"
-            autoComplete="new-password"
-            className="max-w-sm w-full bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50"
-          />
-          <p className="mt-1 text-rose-500 text-sm font-medium">
-            &nbsp;{errors?.newPassword?.[0]}
-          </p>
-        </div>
-        <div className="space-y-1">
-          <label className="min-w-[80px]">Confirm New Password:</label>
-          <Input
-            type="password"
-            name="confirmNewPassword"
-            autoComplete="new-password"
-            className="max-w-sm w-full bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50"
-          />
-          <p className="mt-1 text-rose-500 text-sm font-medium">
-            &nbsp;{errors?.confirmNewPassword?.[0]}
-          </p>
-        </div>
-        <button className="px-5 py-2 bg-emerald-950 rounded-lg self-center text-white font-medium">
-          {isSaving ? "Saving..." : "Save"}
-        </button>
-      </Form>
+      <section className="max-w-sm">
+        <h1 className="text-xl font-medium mb-1">Two-factor authentication</h1>
+        <p>
+          {otp_enabled
+            ? "Two factor authentication has been enabled."
+            : "Two factor authentication is not enabled."}
+        </p>
+        {otp_enabled ? (
+          <button className="mt-3 px-5 py-2 bg-rose-900 hover:bg-rose-600 active:bg-rose-700 rounded-lg self-center text-white font-medium transition-colors">
+            Disable
+          </button>
+        ) : (
+          <Link to="enable-2fa">Enable</Link>
+        )}
+      </section>
+      <section className="mt-14">
+        <h1 className="text-xl font-medium mb-1">Change password</h1>
+        <hr className="h-[2px] bg-zinc-300/50" />
+        <Form method="POST" className="mt-6 space-y-4">
+          <input type="hidden" name="email" value={email} hidden />
+          <div className="space-y-1">
+            <label className="text-sm min-w-[80px]">Current Password:</label>
+            <Input
+              type="password"
+              name="currentPassword"
+              autoComplete="current-password"
+              className="max-w-sm w-full bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50"
+            />
+            <p className="mt-1 text-rose-500 text-sm font-medium">
+              &nbsp;{errors?.currentPassword?.[0]}
+            </p>
+          </div>
+          <div className="space-y-1">
+            <label className="text-sm min-w-[80px]">New Password:</label>
+            <Input
+              type="password"
+              name="newPassword"
+              autoComplete="new-password"
+              className="max-w-sm w-full bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50"
+            />
+            <p className="mt-1 text-rose-500 text-sm font-medium">
+              &nbsp;{errors?.newPassword?.[0]}
+            </p>
+          </div>
+          <div className="space-y-1">
+            <label className="text-sm min-w-[80px]">
+              Confirm New Password:
+            </label>
+            <Input
+              type="password"
+              name="confirmNewPassword"
+              autoComplete="new-password"
+              className="max-w-sm w-full bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50"
+            />
+            <p className="mt-1 text-rose-500 text-sm font-medium">
+              &nbsp;{errors?.confirmNewPassword?.[0]}
+            </p>
+          </div>
+          <button className="px-5 py-2 bg-emerald-950 rounded-lg self-center text-white font-medium">
+            {isSaving ? "Saving..." : "Save"}
+          </button>
+        </Form>
+      </section>
     </section>
   );
 };
