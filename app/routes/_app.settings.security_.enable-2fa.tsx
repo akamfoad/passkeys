@@ -9,7 +9,7 @@ import { getOTP, getRandomHexSecret } from "~/utils/otp.server";
 export const loader = async ({ request }: LoaderArgs) => {
   const { user } = await authenticate(request, { withOtpEnabled: true });
 
-  if (user.otp_verified === true) {
+  if (user.otp_enabled === true) {
     return redirect("/settings/security");
   }
 

@@ -114,11 +114,19 @@ const SecuritySettings = () => {
             : "Two factor authentication is not enabled."}
         </p>
         {otp_enabled ? (
-          <button className="mt-3 px-5 py-2 bg-rose-900 hover:bg-rose-600 active:bg-rose-700 rounded-lg self-center text-white font-medium transition-colors">
+          <Link
+            to="disable-2fa"
+            className="inline-block mt-3 px-5 py-2 bg-rose-900 hover:bg-rose-600 active:bg-rose-700 rounded-lg text-white font-medium transition-colors"
+          >
             Disable
-          </button>
+          </Link>
         ) : (
-          <Link to="enable-2fa">Enable</Link>
+          <Link
+            to="enable-2fa"
+            className="inline-block mt-3 px-5 py-2 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 rounded-lg text-white font-medium transition-colors"
+          >
+            Enable
+          </Link>
         )}
       </section>
       <section className="mt-14">
