@@ -26,3 +26,12 @@ export const tokenCookie = createCookie("access_token", {
   secrets: [COOKIE_SECRET],
   secure: process.env.NODE_ENV === "production",
 });
+
+export const twoFactorAuthCookie = createCookie("2fa_token", {
+  path: "/",
+  maxAge: 86400,
+  sameSite: "strict",
+  domain: COOKIE_DOMAIN,
+  secrets: [COOKIE_SECRET],
+  secure: process.env.NODE_ENV === "production",
+});

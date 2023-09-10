@@ -1,6 +1,7 @@
 import classNames from "classnames";
+import { json, redirect } from "@remix-run/node";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { json, type ActionArgs, redirect } from "@remix-run/node";
+import type { LoaderArgs, ActionArgs } from "@remix-run/node";
 import {
   Form,
   Link,
@@ -16,10 +17,25 @@ import { Spinner } from "~/components/Spinner";
 
 import { db } from "~/utils/db.server";
 import { isPasswordMatch } from "~/utils/password.server";
-import { tokenCookie } from "~/utils/token.server";
+import { tokenCookie, twoFactorAuthCookie } from "~/utils/token.server";
 import { useAuthWithPasskey } from "~/utils/useAuthWithPasskey";
 
 import { LoginSchema } from "~/shared/schema/auth";
+
+export const loader = async ({ request }: LoaderArgs) => {
+  const cookieHeader = request.headers.get("Cookie");
+
+  const id = await tokenCookie.parse(cookieHeader);
+
+  if (!id) {
+    return new Response(undefined);
+  }
+
+  const is2FAed = await twoFactorAuthCookie.parse(cookieHeader);
+  if (!is2FAed) throw redirect("/login/verify");
+
+  return redirect("/");
+};
 
 export const action = async ({ request }: ActionArgs) => {
   const requestData = await request.formData();
@@ -35,8 +51,9 @@ export const action = async ({ request }: ActionArgs) => {
       isVerified: true,
     },
     select: {
-      password: true,
       id: true,
+      password: true,
+      otp_enabled: true,
     },
   });
 
@@ -47,8 +64,16 @@ export const action = async ({ request }: ActionArgs) => {
     return json({ message: "Bad credentials!" }, { status: 401 });
   }
 
+  const isOtpEnabled = user.otp_enabled === true;
+
   const headers = new Headers();
   headers.append("Set-Cookie", await tokenCookie.serialize(user.id));
+  headers.append(
+    "Set-Cookie",
+    await twoFactorAuthCookie.serialize(isOtpEnabled ? false : true)
+  );
+
+  if (isOtpEnabled) throw redirect("/login/verify", { headers });
 
   throw redirect("/", { headers });
 };

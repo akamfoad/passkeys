@@ -231,6 +231,7 @@ const isAuthPage = (request: Request) => {
   return (
     pathname === "/" ||
     pathname === "/login" ||
+    pathname === "/login/verify" ||
     pathname === "/register" ||
     pathname === "/privacy-policy"
   );

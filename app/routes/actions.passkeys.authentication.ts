@@ -6,7 +6,7 @@ import {
 } from "@simplewebauthn/server";
 
 import { db } from "~/utils/db.server";
-import { tokenCookie } from "~/utils/token.server";
+import { tokenCookie, twoFactorAuthCookie } from "~/utils/token.server";
 
 export const loader = async () => {
   const options = generateAuthenticationOptions({
@@ -30,7 +30,10 @@ export const action = async ({ request }: ActionArgs) => {
 
   if (!authenticator) {
     throw json(
-      { message: "Couldn't find any match for the provided passkey, make sure to use a passkey connected to your account." },
+      {
+        message:
+          "Couldn't find any match for the provided passkey, make sure to use a passkey connected to your account.",
+      },
       { status: 401 }
     );
   }
@@ -61,6 +64,7 @@ export const action = async ({ request }: ActionArgs) => {
 
     const headers = new Headers();
     headers.append("Set-Cookie", await tokenCookie.serialize(userId));
+    headers.append("Set-Cookie", await twoFactorAuthCookie.serialize(true));
 
     return json({ verified }, { headers });
   }

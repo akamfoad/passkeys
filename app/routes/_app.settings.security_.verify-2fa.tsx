@@ -44,8 +44,6 @@ export const action = async ({ request }: ActionArgs) => {
 
   const token = body.get("token") as string | null;
 
-  console.log(token);
-
   if (token === null) {
     throw json({ message: "'token' field is required" }, { status: 400 });
   }
@@ -116,14 +114,14 @@ const Verify2FA = () => {
       <Form
         ref={verifyFormRef}
         preventScrollReset
-        method="PATCH"
+        method="POST"
         encType="multipart/form-data"
         className="mt-4 max-w-sm"
       >
         <div className="flex items-center gap-3">
           <Input
             name="token"
-            className="max-w-sm w-full bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50 appearance-[textfield]"
+            className="max-w-sm w-full bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50"
             type="text"
             maxLength={6}
             minLength={6}
@@ -143,7 +141,9 @@ const Verify2FA = () => {
             verify
           </button>
         </div>
-        <p className="sm:ps-0.5 mt-1 text-rose-500 text-sm font-medium">&nbsp;{actionData?.message}</p>
+        <p className="sm:ps-0.5 mt-1 text-rose-500 text-sm font-medium">
+          &nbsp;{actionData?.message}
+        </p>
       </Form>
     </section>
   );
