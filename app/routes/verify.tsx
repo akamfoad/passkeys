@@ -1,9 +1,37 @@
-import { json, type ActionArgs } from "@remix-run/node";
-import { Link, useFetcher, useSearchParams } from "@remix-run/react";
 import { z } from "zod";
-import { getRandomHash } from "~/utils/crypto.server";
+import { json, redirect } from "@remix-run/node";
+import type { LoaderArgs, ActionArgs } from "@remix-run/node";
+import { Link, useFetcher, useSearchParams } from "@remix-run/react";
+
 import { db } from "~/utils/db.server";
+import { tokenCookie } from "~/utils/token.server";
+import { getRandomHash } from "~/utils/crypto.server";
 import { sendVerificationEmail } from "~/utils/email.server";
+
+export const loader = async ({ request }: LoaderArgs) => {
+  const { searchParams } = new URL(request.url);
+
+  const email = searchParams.get("email");
+  if (email === null || !z.string().email().safeParse(email).success) {
+    return redirect("/");
+  }
+
+  const cookieHeader = request.headers.get("Cookie");
+  const id = await tokenCookie.parse(cookieHeader);
+
+  if (id) return redirect("/");
+
+  const user = await db.user.findUnique({
+    where: { email },
+    select: { id: true },
+  });
+
+  if (!user) return redirect("/");
+
+  // FIXME check if email is in params, if so check if user exists
+  // and show different messages based on that
+  return null;
+};
 
 export const action = async ({ request }: ActionArgs) => {
   const { searchParams } = new URL(request.url);
@@ -32,14 +60,7 @@ export const action = async ({ request }: ActionArgs) => {
     throw json(null, { status: 500 });
   }
 
-
   return { success: true };
-};
-
-export const loader = () => {
-  // FIXME check if email is in params, if so check if user exists
-  // and show different messages based on that
-  return null;
 };
 
 const Verify = () => {
