@@ -9,7 +9,7 @@ import {
   useLoaderData,
   useNavigation,
 } from "@remix-run/react";
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs, SerializeFrom } from "@remix-run/node";
 import { browserSupportsWebAuthn } from "@simplewebauthn/browser";
 
 import { Icon } from "~/icons/App";
@@ -19,11 +19,17 @@ import { PencilIcon } from "~/icons/Pencil";
 import { Spinner } from "~/components/Spinner";
 import Trash from "~/icons/Trash";
 import classNames from "classnames";
+import type { Authenticator } from "@prisma/client";
+
+type Passkey = Pick<
+  Authenticator,
+  "id" | "name" | "credentialBackedUp" | "createdAt" | "lastUsedAt"
+>;
 
 export const loader = async ({ request }: LoaderArgs) => {
   const { user } = await authenticate(request);
 
-  const authenticators = await db.authenticator.findMany({
+  const authenticators: Passkey[] = await db.authenticator.findMany({
     where: { userId: user.id },
     select: {
       id: true,
@@ -37,6 +43,8 @@ export const loader = async ({ request }: LoaderArgs) => {
 
   return json({ passkeys: authenticators });
 };
+
+type SerializedPasskeys = SerializeFrom<Passkey>;
 
 const DeletePasskeySchema = z
   .object({
@@ -101,12 +109,9 @@ export const action = async ({ request }: ActionArgs) => {
 };
 
 const PasskeysSettings = () => {
-  const navigation = useNavigation();
-  const formAction = useFormAction();
   const { passkeys } = useLoaderData<typeof loader>();
 
   const [isPasskeySupported, setIsPasskeySupported] = useState(true);
-  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     setIsPasskeySupported(browserSupportsWebAuthn());
@@ -132,121 +137,15 @@ const PasskeysSettings = () => {
         <ul className="flex flex-col gap-5">
           {passkeys.map(
             ({ id, name, createdAt, lastUsedAt, credentialBackedUp }) => {
-              const isSubmitting =
-                navigation.state !== "idle" &&
-                navigation.formAction === formAction &&
-                navigation.formData?.get("id") === id;
-
-              const isDeleting =
-                isSubmitting && navigation.formMethod === "DELETE";
-
-              const isRenaming =
-                isSubmitting && navigation.formMethod === "POST";
-
-              let passkeyName = name;
-
-              if (isRenaming) {
-                passkeyName = navigation.formData?.get("passkeyName") as string;
-              }
-
               return (
-                <li
+                <Passkey
                   key={id}
-                  className="flex flex-col gap-4 justify-between lg:flex-row lg:items-center border border-slate-500/50 px-5 py-3 rounded-lg"
-                >
-                  <div className="flex gap-4 items-center">
-                    <div className="text-slate-700">
-                      <Icon height={24} />
-                    </div>
-                    <div>
-                      {isEditing && !isRenaming ? (
-                        <Form
-                          method="POST"
-                          encType="multipart/form-data"
-                          className="flex items-center gap-2"
-                          onSubmit={() => setIsEditing(false)}
-                        >
-                          <input type="hidden" name="id" value={id} />
-                          <input
-                            required
-                            name="passkeyName"
-                            defaultValue={name || ""}
-                            className="text-base max-w-sm w-full border border-neutral-300 bg-neutral-100 disabled:bg-slate-50/50 disabled:text-gray-600/50 rounded-md px-1.5 py-0.5"
-                            autoFocus
-                          />
-                          <button
-                            onClick={() => setIsEditing(true)}
-                            className={classNames(
-                              "px-2 py-1 flex items-center justify-center text-sm rounded-md",
-                              "bg-gray-300  hover:bg-gray-400/50 transition-colors"
-                            )}
-                          >
-                            Save
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setIsEditing(false)}
-                            className={classNames(
-                              "px-2 py-1 flex items-center justify-center text-sm rounded-md",
-                              "hover:bg-gray-300/50 transition-colors"
-                            )}
-                          >
-                            Cancel
-                          </button>
-                        </Form>
-                      ) : (
-                        <h2>
-                          <span className="font-medium">{passkeyName}</span>
-                          {credentialBackedUp && (
-                            <span className="ms-2 text-xs font-li px-1.5 py-1 rounded-full bg-sky-500/20 text-sky-950">
-                              Synced
-                            </span>
-                          )}
-                        </h2>
-                      )}
-                      <p className="text-sm font-light text-slate-800 mt-2">
-                        <span>
-                          Added on{" "}
-                          {format(new Date(createdAt), "MMM d, hh:mm a")}
-                        </span>
-                        {lastUsedAt && (
-                          <span>
-                            {" "}
-                            | Last used{" "}
-                            {format(new Date(createdAt), "MMM d, hh:mm a")}
-                          </span>
-                        )}
-                      </p>
-                    </div>
-                  </div>
-                  <Form
-                    method="DELETE"
-                    encType="multipart/form-data"
-                    className={classNames("flex items-center gap-2", {
-                      collapse: isEditing,
-                    })}
-                  >
-                    <input type="hidden" name="id" value={id} />
-                    <button
-                      type="button"
-                      onClick={() => setIsEditing(true)}
-                      className={classNames(
-                        "w-8 h-8 flex items-center justify-center text-sm font-light bg-gray-300/50  border border-gray-900/50 p-1.5 rounded-md",
-                        "hover:bg-gray-300 transition-colors"
-                      )}
-                    >
-                      {isDeleting ? <Spinner /> : <PencilIcon height={18} />}
-                    </button>
-                    <button
-                      className={classNames(
-                        "w-8 h-8 flex items-center justify-center text-sm font-light bg-gray-300/50  border border-gray-900/50  text-rose-600 p-1.5 rounded-md",
-                        "hover:bg-rose-700 hover:text-white hover:border-transparent transition-colors"
-                      )}
-                    >
-                      {isDeleting ? <Spinner /> : <Trash height={18} />}
-                    </button>
-                  </Form>
-                </li>
+                  id={id}
+                  name={name}
+                  credentialBackedUp={credentialBackedUp}
+                  createdAt={createdAt}
+                  lastUsedAt={lastUsedAt}
+                />
               );
             }
           )}
@@ -260,3 +159,128 @@ const PasskeysSettings = () => {
 };
 
 export default PasskeysSettings;
+
+const Passkey = ({
+  id,
+  name,
+  credentialBackedUp,
+  createdAt,
+  lastUsedAt,
+}: SerializedPasskeys) => {
+  const navigation = useNavigation();
+  const formAction = useFormAction();
+  const [isEditing, setIsEditing] = useState(false);
+
+  const isSubmitting =
+    navigation.state !== "idle" &&
+    navigation.formAction === formAction &&
+    navigation.formData?.get("id") === id;
+
+  const isDeleting = isSubmitting && navigation.formMethod === "DELETE";
+
+  const isRenaming = isSubmitting && navigation.formMethod === "POST";
+
+  let passkeyName = name;
+
+  if (isRenaming) {
+    passkeyName = navigation.formData?.get("passkeyName") as string;
+  }
+
+  return (
+    <li
+      key={id}
+      className="flex flex-col gap-4 justify-between lg:flex-row lg:items-center border border-slate-500/50 px-5 py-3 rounded-lg"
+    >
+      <div className="flex gap-4 items-center">
+        <div className="text-slate-700">
+          <Icon height={24} />
+        </div>
+        <div>
+          {isEditing && !isRenaming ? (
+            <Form
+              method="POST"
+              encType="multipart/form-data"
+              className="flex items-center gap-2"
+              onSubmit={() => setIsEditing(false)}
+            >
+              <input type="hidden" name="id" value={id} />
+              <input
+                required
+                name="passkeyName"
+                defaultValue={name || ""}
+                className="text-base max-w-sm w-full border border-neutral-300 bg-neutral-100 disabled:bg-slate-50/50 disabled:text-gray-600/50 rounded-md px-1.5 py-0.5"
+                autoFocus
+              />
+              <button
+                onClick={() => setIsEditing(true)}
+                className={classNames(
+                  "px-2 py-1 flex items-center justify-center text-sm rounded-md",
+                  "bg-gray-300  hover:bg-gray-400/50 transition-colors"
+                )}
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsEditing(false)}
+                className={classNames(
+                  "px-2 py-1 flex items-center justify-center text-sm rounded-md",
+                  "hover:bg-gray-300/50 transition-colors"
+                )}
+              >
+                Cancel
+              </button>
+            </Form>
+          ) : (
+            <h2>
+              <span className="font-medium">{passkeyName}</span>
+              {credentialBackedUp && (
+                <span className="ms-2 text-xs font-li px-1.5 py-1 rounded-full bg-sky-500/20 text-sky-950">
+                  Synced
+                </span>
+              )}
+            </h2>
+          )}
+          <p className="text-sm font-light text-slate-800 mt-2">
+            <span>
+              Added on {format(new Date(createdAt), "MMM d, hh:mm a")}
+            </span>
+            {lastUsedAt && (
+              <span>
+                {" "}
+                | Last used {format(new Date(createdAt), "MMM d, hh:mm a")}
+              </span>
+            )}
+          </p>
+        </div>
+      </div>
+      <Form
+        method="DELETE"
+        encType="multipart/form-data"
+        className={classNames("flex items-center gap-2", {
+          collapse: isEditing,
+        })}
+      >
+        <input type="hidden" name="id" value={id} />
+        <button
+          type="button"
+          onClick={() => setIsEditing(true)}
+          className={classNames(
+            "w-8 h-8 flex items-center justify-center text-sm font-light bg-gray-300/50  border border-gray-900/50 p-1.5 rounded-md",
+            "hover:bg-gray-300 transition-colors"
+          )}
+        >
+          {isDeleting ? <Spinner /> : <PencilIcon height={18} />}
+        </button>
+        <button
+          className={classNames(
+            "w-8 h-8 flex items-center justify-center text-sm font-light bg-gray-300/50  border border-gray-900/50  text-rose-600 p-1.5 rounded-md",
+            "hover:bg-rose-700 hover:text-white hover:border-transparent transition-colors"
+          )}
+        >
+          {isDeleting ? <Spinner /> : <Trash height={18} />}
+        </button>
+      </Form>
+    </li>
+  );
+};
