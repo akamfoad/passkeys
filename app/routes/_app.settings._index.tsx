@@ -63,7 +63,7 @@ const GeneralSettings = () => {
 
   return (
     <section>
-      <Form method="POST" className="space-y-3">
+      <Form method="POST">
         <div className="space-y-1">
           <label className="min-w-[80px]" htmlFor="firstName">
             First name:
@@ -79,7 +79,7 @@ const GeneralSettings = () => {
             &nbsp;{errors?.firstName?.[0]}
           </p>
         </div>
-        <div className="space-y-1">
+        <div className="space-y-1 mt-3">
           <label className="min-w-[80px]" htmlFor="lastName">
             Last name:
           </label>
@@ -94,7 +94,7 @@ const GeneralSettings = () => {
             &nbsp;{errors?.lastName?.[0]}
           </p>
         </div>
-        <div className="space-y-1">
+        <div className="space-y-1 mt-3">
           <label className="min-w-[80px]">Email:</label>
           <Input
             name="email"
@@ -107,7 +107,7 @@ const GeneralSettings = () => {
             Changing your email address currently is not supported.
           </p>
         </div>
-        <button className="px-5 py-2 bg-emerald-950 rounded-lg self-center text-white font-medium">
+        <button className="mt-12 px-5 py-2 bg-emerald-950 rounded-lg text-white font-medium">
           {isSaving ? "Saving..." : "Save"}
         </button>
       </Form>
