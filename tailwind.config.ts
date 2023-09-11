@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss";
 import prosePlugin from "@tailwindcss/typography";
+import containerQueryPlugin from "@tailwindcss/container-queries";
 
 export default {
   content: ["./app/**/*.{js,jsx,ts,tsx}"],
@@ -8,5 +9,5 @@ export default {
       fontFamily: { sans: ["Inter, sans-serif"] },
     },
   },
-  plugins: [prosePlugin],
+  plugins: [prosePlugin, containerQueryPlugin],
 } satisfies Config;

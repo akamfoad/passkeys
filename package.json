@@ -21,6 +21,7 @@
     "@remix-run/vercel": "^1.19.1",
     "@simplewebauthn/browser": "^8.0.2",
     "@simplewebauthn/server": "^8.1.1",
+    "@tailwindcss/container-queries": "^0.1.1",
     "@types/ua-parser-js": "^0.7.36",
     "@vercel/node": "^2.0.0",
     "bcrypt": "^5.1.0",
