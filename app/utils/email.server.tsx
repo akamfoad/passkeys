@@ -44,7 +44,7 @@ export const sendVerificationEmail = async ({
     to,
     from: EMAIL_FROM,
     subject: "Passkeys Verification Code",
-    react: <Email name={name} url={getVerificationUrl(code)} />,
+    react: <Email name={name} email={to} url={getVerificationUrl(code)} />,
   });
 
   return id;
