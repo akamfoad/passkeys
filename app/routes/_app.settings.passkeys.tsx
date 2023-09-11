@@ -189,7 +189,7 @@ const Passkey = ({
   return (
     <li
       key={id}
-      className="flex flex-col gap-4 justify-between lg:flex-row lg:items-center border border-slate-500/50 px-5 py-3 rounded-lg"
+      className="flex flex-wrap gap-8 justify-between lg:items-center border border-slate-500/50 px-5 py-3 rounded-lg"
     >
       <div className="flex gap-4 items-center">
         <div className="text-slate-700">
@@ -211,28 +211,30 @@ const Passkey = ({
                 className="text-base max-w-sm w-full border border-neutral-300 bg-neutral-100 disabled:bg-slate-50/50 disabled:text-gray-600/50 rounded-md px-1.5 py-0.5"
                 autoFocus
               />
-              <button
-                onClick={() => setIsEditing(true)}
-                className={classNames(
-                  "px-2 py-1 flex items-center justify-center text-sm rounded-md",
-                  "bg-gray-300  hover:bg-gray-400/50 transition-colors"
-                )}
-              >
-                Save
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsEditing(false)}
-                className={classNames(
-                  "px-2 py-1 flex items-center justify-center text-sm rounded-md",
-                  "hover:bg-gray-300/50 transition-colors"
-                )}
-              >
-                Cancel
-              </button>
+              <div className="flex items-center gap-2 min-w-fit">
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className={classNames(
+                    "px-2 py-1 flex items-center justify-center text-sm rounded-md",
+                    "bg-gray-300  hover:bg-gray-400/50 transition-colors"
+                  )}
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(false)}
+                  className={classNames(
+                    "px-2 py-1 flex items-center justify-center text-sm rounded-md",
+                    "hover:bg-gray-300/50 transition-colors"
+                  )}
+                >
+                  Cancel
+                </button>
+              </div>
             </Form>
           ) : (
-            <h2>
+            <h2 className="h-7 pb-1">
               <span className="font-medium">{passkeyName}</span>
               {credentialBackedUp && (
                 <span className="ms-2 text-xs font-li px-1.5 py-1 rounded-full bg-sky-500/20 text-sky-950">
@@ -258,7 +260,7 @@ const Passkey = ({
         method="DELETE"
         encType="multipart/form-data"
         className={classNames("flex items-center gap-2", {
-          collapse: isEditing,
+          "hidden": isEditing,
         })}
       >
         <input type="hidden" name="id" value={id} />
@@ -270,7 +272,7 @@ const Passkey = ({
             "hover:bg-gray-300 transition-colors"
           )}
         >
-          {isDeleting ? <Spinner /> : <PencilIcon height={18} />}
+          <PencilIcon height={18} />
         </button>
         <button
           className={classNames(
