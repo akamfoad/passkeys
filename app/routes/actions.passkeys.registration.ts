@@ -17,7 +17,7 @@ export const loader = async ({ request }: LoaderArgs) => {
     where: { userId: user.id },
   })) as unknown as Authenticator[];
 
-  const options = generateRegistrationOptions({
+  const options = await generateRegistrationOptions({
     rpName,
     rpID,
     userID: user.id.toString(),

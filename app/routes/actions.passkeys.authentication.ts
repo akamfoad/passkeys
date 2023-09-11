@@ -9,7 +9,7 @@ import { db } from "~/utils/db.server";
 import { tokenCookie, twoFactorAuthCookie } from "~/utils/token.server";
 
 export const loader = async () => {
-  const options = generateAuthenticationOptions({
+  const options = await generateAuthenticationOptions({
     userVerification: "preferred",
   });
 
