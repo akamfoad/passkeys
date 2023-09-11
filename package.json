@@ -22,7 +22,7 @@
     "@simplewebauthn/browser": "^8.0.2",
     "@simplewebauthn/server": "^8.1.1",
     "@types/ua-parser-js": "^0.7.36",
-    "@vercel/node": "^3.0.4",
+    "@vercel/node": "^2.0.0",
     "bcrypt": "^5.1.0",
     "classnames": "^2.3.2",
     "date-fns": "^2.30.0",
