@@ -28,8 +28,6 @@ export const loader = async ({ request }: LoaderArgs) => {
 
   if (!user) return redirect("/");
 
-  // FIXME check if email is in params, if so check if user exists
-  // and show different messages based on that
   return null;
 };
 
@@ -47,13 +45,18 @@ export const action = async ({ request }: ActionArgs) => {
 
   // FIXME resend email and set time for last resend
   // if user exists in DB
-  const { name } = await db.user.update({
+  const { firstName, lastName } = await db.user.update({
     where: { email },
     data: { verificationCode },
+    select: { firstName: true, lastName: true },
   });
 
   try {
-    await sendVerificationEmail({ name, to: email, code: verificationCode });
+    await sendVerificationEmail({
+      name: `${firstName} ${lastName}`,
+      to: email,
+      code: verificationCode,
+    });
   } catch (error) {
     console.log("Failed to send email");
     console.log(error);
