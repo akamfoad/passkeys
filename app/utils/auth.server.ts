@@ -39,7 +39,8 @@ export const authenticate = async (
     where: { id, isVerified: true },
     select: {
       id: true,
-      name: true,
+      firstName: true,
+      lastName: true,
       email: true,
       password: withPassword === true,
       currentChallenge: withChallenge === true,

@@ -10,14 +10,14 @@ export const loader = async ({ request }: LoaderArgs) => {
   }
 
   try {
-    const { name } = await db.user.update({
+    const { firstName } = await db.user.update({
       where: { verificationCode },
       data: { isVerified: true },
-      select: { name: true },
+      select: { firstName: true },
     });
 
     const sp = new URLSearchParams();
-    sp.set("congratulations", name);
+    sp.set("congratulations", firstName);
 
     return redirect(`/login?${sp.toString()}`);
   } catch (error) {

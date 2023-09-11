@@ -33,7 +33,7 @@ export const loader = async ({ request }: LoaderArgs) => {
     return redirect("/");
   }
 
-  return json({ name: user.name });
+  return json({ name: user.firstName });
 };
 
 export const action = async ({ request }: ActionArgs) => {

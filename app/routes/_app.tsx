@@ -22,7 +22,8 @@ const Navbar = () => {
               className="flex items-center gap-2 text-slate-300 hover:text-slate-50 transition-colors"
               to="/settings"
             >
-              {user.name}
+              {user.firstName} 
+              {user.lastName}
               <UserCircle />
             </Link>
             <fetcher.Form method="POST" action="/actions/logout">

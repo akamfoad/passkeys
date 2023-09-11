@@ -22,7 +22,7 @@ export const loader = async ({ request }: LoaderArgs) => {
     rpID,
     userID: user.id.toString(),
     userName: user.email,
-    userDisplayName: user.name,
+    userDisplayName: `${user.firstName} ${user.lastName}`,
     // Don't prompt users for additional information about the authenticator
     // (Recommended for smoother UX)
     attestationType: "none",

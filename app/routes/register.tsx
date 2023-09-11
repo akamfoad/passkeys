@@ -32,17 +32,29 @@ export const action = async ({ request }: ActionArgs) => {
   const hashedPassword = encryptPassword(parseResult.data.password);
   const verificationCode = getRandomHash(parseResult.data.email);
 
-  const { name, email } = await db.user.create({
+  const { firstName, lastName, email } = await db.user.create({
     data: {
       verificationCode,
       password: hashedPassword,
-      name: parseResult.data.name,
+      firstName: parseResult.data.firstName,
+      lastName: parseResult.data.lastName,
       email: parseResult.data.email,
+    },
+    select: {
+      firstName: true,
+      lastName: true,
+      email: true,
     },
   });
 
+  const userName = `${firstName} ${lastName}`;
+
   try {
-    await sendVerificationEmail({ name, to: email, code: verificationCode });
+    await sendVerificationEmail({
+      name: userName,
+      to: email,
+      code: verificationCode,
+    });
   } catch (error) {
     console.log("Failed to send email");
     console.log(error);
@@ -50,7 +62,7 @@ export const action = async ({ request }: ActionArgs) => {
   }
 
   const searchParams = new URLSearchParams();
-  searchParams.set("name", name);
+  searchParams.set("name", userName);
   searchParams.set("email", email);
 
   throw redirect(`/verify?${searchParams.toString()}`);
@@ -61,36 +73,50 @@ const Register = () => {
 
   return (
     <div className="min-h-screen grid grid-cols-2 gap-2">
-      <Carousel message="The registration process is quick and easy, you'll create an account
-            under 2min." />
+      <Carousel message="The registration process is quick and easy, you'll create an account under 2min." />
       <div className="flex flex-col items-center px-4 sm:px-0 col-span-2 md:col-span-1">
         <Form
           method="POST"
-          className="flex flex-col gap-4 sm:my-auto w-full max-w-lg p-4 rounded-md"
+          className="flex flex-col gap-3 sm:my-auto w-full max-w-lg p-4 rounded-md"
         >
           <div>
             <h1 className="font-bold text-2xl">Get Started</h1>
             <p className="text-slate-500 mt-4">Create your account now</p>
           </div>
           <div className="mt-12">
-            <div className="flex flex-col gap-1">
-              <label className="w-20" htmlFor="name">
-                Full name
+            <div className="flex flex-col gap-0.5">
+              <label className="w-20" htmlFor="firstName">
+                First name
               </label>
               <input
-                type="name"
-                name="name"
-                id="name"
+                id="firstName"
+                name="firstName"
+                autoComplete="given-name"
                 className="rounded-md border border-zinc-300 block p-2 flex-1"
-                autoComplete="name"
               />
             </div>
             <p className="sm:ps-0.5 mt-1 text-rose-500 text-sm font-medium">
-              &nbsp;{errors?.name?.[0]}
+              &nbsp;{errors?.firstName?.[0]}
             </p>
           </div>
           <div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-0.5">
+              <label className="w-20" htmlFor="lastName">
+                Last name
+              </label>
+              <input
+                id="lastName"
+                name="lastName"
+                autoComplete="family-name"
+                className="rounded-md border border-zinc-300 block p-2 flex-1"
+              />
+            </div>
+            <p className="sm:ps-0.5 mt-1 text-rose-500 text-sm font-medium">
+              &nbsp;{errors?.lastName?.[0]}
+            </p>
+          </div>
+          <div>
+            <div className="flex flex-col gap-0.5">
               <label className="w-20" htmlFor="email">
                 Email
               </label>
@@ -107,7 +133,7 @@ const Register = () => {
             </p>
           </div>
           <div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-0.5">
               <label className="w-20" htmlFor="password">
                 Password
               </label>
@@ -123,10 +149,10 @@ const Register = () => {
               &nbsp;{errors?.password?.[0]}
             </p>
           </div>
-          <button className="mt-6 px-5 py-2 bg-emerald-950 rounded-lg text-white font-medium">
+          <button className="mt-1 px-5 py-2 bg-emerald-950 rounded-lg text-white font-medium">
             Register
           </button>
-          <p className="text-center mt-4">
+          <p className="text-center mt-2">
             Already have an account?
             <Link className="ms-2 p-2 rounded-lg" to="/login">
               Login

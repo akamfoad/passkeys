@@ -9,7 +9,7 @@ import {
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 
 import { db } from "~/utils/db.server";
-import { nameSchema } from "~/shared/schema/user";
+import { firstNameSchema, lastNameSchema } from "~/shared/schema/user";
 import { useDebounce } from "~/utils/useDebounce";
 import { authenticate } from "~/utils/auth.server";
 import { Input } from "~/components/Input";
@@ -27,15 +27,29 @@ export const action = async ({ request }: ActionArgs) => {
 
   const formData = await request.formData();
 
-  const parseResult = nameSchema.safeParse(Object.fromEntries(formData).name);
+  const body = Object.fromEntries(formData);
 
-  if (!parseResult.success) {
-    return json(parseResult.error.flatten().formErrors, { status: 400 });
+  const firstNameParseResult = firstNameSchema.safeParse(body.firstName);
+  const lastNameParseResult = lastNameSchema.safeParse(body.lastNa);
+
+  if (!firstNameParseResult.success) {
+    return json(firstNameParseResult.error.flatten().formErrors, {
+      status: 400,
+    });
+  }
+
+  if (!lastNameParseResult.success) {
+    return json(lastNameParseResult.error.flatten().formErrors, {
+      status: 400,
+    });
   }
 
   await db.user.update({
     where: { id: user.id },
-    data: { name: parseResult.data },
+    data: {
+      firstName: firstNameParseResult.data,
+      lastName: lastNameParseResult.data,
+    },
   });
 
   return new Response(undefined, { status: 200 });
@@ -55,14 +69,32 @@ const GeneralSettings = () => {
 
   return (
     <section>
-      <Form method="POST" className="space-y-6">
+      <Form method="POST" className="space-y-3">
         <div className="space-y-1">
-          <label className="min-w-[80px]">Full name:</label>
+          <label className="min-w-[80px]" htmlFor="firstName">
+            First name:
+          </label>
           <Input
-            name="name"
-            defaultValue={user.name}
+            id="firstName"
+            name="firstName"
+            defaultValue={user.firstName}
+            autoComplete="given-name"
             className="max-w-sm w-full bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50"
-            autoComplete="name"
+          />
+          <p className="mt-1 text-rose-500 text-sm font-medium">
+            &nbsp;{errors?.[0]}
+          </p>
+        </div>
+        <div className="space-y-1">
+          <label className="min-w-[80px]" htmlFor="lastName">
+            Last name:
+          </label>
+          <Input
+            id="lastName"
+            name="lastName"
+            defaultValue={user.lastName}
+            autoComplete="lastName"
+            className="max-w-sm w-full bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50"
           />
           <p className="mt-1 text-rose-500 text-sm font-medium">
             &nbsp;{errors?.[0]}
