@@ -1,4 +1,3 @@
-import { json } from "@remix-run/node";
 import {
   Form,
   useActionData,
@@ -6,13 +5,15 @@ import {
   useLoaderData,
   useNavigation,
 } from "@remix-run/react";
+import { json } from "@remix-run/node";
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 
+import { Input } from "~/components/Input";
+
 import { db } from "~/utils/db.server";
-import { firstNameSchema, lastNameSchema } from "~/shared/schema/user";
 import { useDebounce } from "~/utils/useDebounce";
 import { authenticate } from "~/utils/auth.server";
-import { Input } from "~/components/Input";
+import { userSettingsSchema } from "~/shared/schema/user";
 
 export const loader = async ({ request }: LoaderArgs) => {
   const { user } = await authenticate(request);
@@ -27,32 +28,25 @@ export const action = async ({ request }: ActionArgs) => {
 
   const formData = await request.formData();
 
-  const body = Object.fromEntries(formData);
+  const parseResult = userSettingsSchema.safeParse(
+    Object.fromEntries(formData)
+  );
 
-  const firstNameParseResult = firstNameSchema.safeParse(body.firstName);
-  const lastNameParseResult = lastNameSchema.safeParse(body.lastNa);
-
-  if (!firstNameParseResult.success) {
-    return json(firstNameParseResult.error.flatten().formErrors, {
-      status: 400,
-    });
-  }
-
-  if (!lastNameParseResult.success) {
-    return json(lastNameParseResult.error.flatten().formErrors, {
-      status: 400,
+  if (!parseResult.success) {
+    return json(parseResult.error.flatten().fieldErrors, {
+      status: 422,
     });
   }
 
   await db.user.update({
     where: { id: user.id },
     data: {
-      firstName: firstNameParseResult.data,
-      lastName: lastNameParseResult.data,
+      firstName: parseResult.data.firstName,
+      lastName: parseResult.data.lastName,
     },
   });
 
-  return new Response(undefined, { status: 200 });
+  return json(null, { status: 200 });
 };
 
 const GeneralSettings = () => {
@@ -82,7 +76,7 @@ const GeneralSettings = () => {
             className="max-w-sm w-full bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50"
           />
           <p className="mt-1 text-rose-500 text-sm font-medium">
-            &nbsp;{errors?.[0]}
+            &nbsp;{errors?.firstName?.[0]}
           </p>
         </div>
         <div className="space-y-1">
@@ -97,7 +91,7 @@ const GeneralSettings = () => {
             className="max-w-sm w-full bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50"
           />
           <p className="mt-1 text-rose-500 text-sm font-medium">
-            &nbsp;{errors?.[0]}
+            &nbsp;{errors?.lastName?.[0]}
           </p>
         </div>
         <div className="space-y-1">

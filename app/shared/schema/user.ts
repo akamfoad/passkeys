@@ -11,3 +11,7 @@ const buildNameSchema = (fieldName: string) =>
 
 export const firstNameSchema = buildNameSchema("First Name");
 export const lastNameSchema = buildNameSchema("Last Name");
+
+export const userSettingsSchema = z
+  .object({ firstName: firstNameSchema, lastName: lastNameSchema })
+  .required();
