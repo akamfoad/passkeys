@@ -12,7 +12,7 @@
     "worker:dev": "node ./scripts/sw/build.mjs --dev"
   },
   "dependencies": {
-    "@cheprasov/qrcode": "^0.1.0",
+    "@akamfoad/qrcode": "^0.1.0",
     "@prisma/client": "^5.2.0",
     "@radix-ui/react-switch": "^1.0.3",
     "@remix-pwa/sw": "^1.1.3",

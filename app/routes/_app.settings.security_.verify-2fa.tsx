@@ -1,4 +1,4 @@
-import { QRCodeSVG } from "@cheprasov/qrcode";
+import { QRCodeSVG } from "@akamfoad/qrcode";
 import type { LoaderArgs, ActionArgs } from "@remix-run/node";
 import { redirect, json } from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
@@ -78,7 +78,6 @@ const Verify2FA = () => {
 
   const qrCodeSvg = useMemo(() => {
     const qrSVG = new QRCodeSVG(otpAuthUrl, { level: "H", padding: 6 });
-    console.log(qrSVG);
     return qrSVG.toString();
   }, [otpAuthUrl]);
 
@@ -93,7 +92,7 @@ const Verify2FA = () => {
 
       <div
         className="w-full max-w-sm aspect-square mt-4"
-        dangerouslySetInnerHTML={{ __html: qrCodeSvg }}
+        dangerouslySetInnerHTML={{ __html: qrCodeSvg || "" }}
       />
 
       <p className="text-zinc-600 mt-5">
