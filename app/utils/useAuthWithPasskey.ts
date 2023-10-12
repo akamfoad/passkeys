@@ -74,9 +74,13 @@ export const useAuthWithPasskey = () => {
   };
 
   useEffect(() => {
-    browserSupportsWebAuthnAutofill().then((supported) => {
-      if (supported) loginWithPasskeys(true);
-    });
+    try {
+      browserSupportsWebAuthnAutofill().then((supported) => {
+        if (supported) loginWithPasskeys(true);
+      });
+    } finally {
+      return;
+    }
   }, []);
 
   return {
