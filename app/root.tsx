@@ -220,7 +220,7 @@ export const links: LinksFunction = () => [
 
 export const meta: V2_MetaFunction = () => [
   { title: "Passkeys" },
-  { name: "description", content: "Passkey demonstration" },
+  { name: "description", content: "Demonstrating passkeys through user's experience!" },
   { name: "apple-mobile-web-app-capable", content: "yes" },
   { name: "viewport", content: "width=device-width, initial-scale=1" },
 ];

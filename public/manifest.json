@@ -1,10 +1,10 @@
 {
   "id": "dev.akamfoad.passkeys",
-  "name": "Pass keys",
-  "short_name": "Pass keys",
+  "name": "Passkeys",
+  "short_name": "Passkeys",
   "lang": "en",
   "orientation": "portrait-primary",
-  "description": "Passkey demonstration",
+  "description": "Demonstrating passkeys through user's experience!",
   "background_color": "#e5e5e5",
   "theme_color": "#020617",
   "display": "standalone",
