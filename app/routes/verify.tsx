@@ -1,14 +1,14 @@
 import { z } from "zod";
-import { json, redirect } from "@remix-run/node";
-import type { LoaderArgs, ActionArgs } from "@remix-run/node";
+import { json, redirect } from "@vercel/remix";
 import { Link, useFetcher, useSearchParams } from "@remix-run/react";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@vercel/remix";
 
 import { db } from "~/utils/db.server";
 import { tokenCookie } from "~/utils/token.server";
 import { getRandomHash } from "~/utils/crypto.server";
 import { sendVerificationEmail } from "~/utils/email.server";
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { searchParams } = new URL(request.url);
 
   const email = searchParams.get("email");
@@ -31,7 +31,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   return null;
 };
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const { searchParams } = new URL(request.url);
   const email = searchParams.get("email");
   if (email === null || !z.string().email().safeParse(email).success) {

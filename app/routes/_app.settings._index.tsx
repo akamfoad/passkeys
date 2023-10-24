@@ -1,3 +1,4 @@
+import { json } from "@vercel/remix";
 import {
   Form,
   useActionData,
@@ -5,8 +6,7 @@ import {
   useLoaderData,
   useNavigation,
 } from "@remix-run/react";
-import { json } from "@remix-run/node";
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs} from "@vercel/remix";
 
 import { Input } from "~/components/Input";
 
@@ -15,7 +15,7 @@ import { useDebounce } from "~/utils/useDebounce";
 import { authenticate } from "~/utils/auth.server";
 import { userSettingsSchema } from "~/shared/schema/user";
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { user } = await authenticate(request);
 
   if (!user) throw json({ message: "Something Went wrong!" });
@@ -23,7 +23,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   return { user };
 };
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const { user } = await authenticate(request);
 
   const formData = await request.formData();

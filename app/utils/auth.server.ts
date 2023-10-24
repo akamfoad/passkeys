@@ -1,6 +1,7 @@
-import { redirect } from "@remix-run/node";
-import { tokenCookie, twoFactorAuthCookie } from "./token.server";
+import { redirect } from "@vercel/remix";
+
 import { db } from "./db.server";
+import { tokenCookie, twoFactorAuthCookie } from "./token.server";
 
 export const authenticate = async (
   request: Request,

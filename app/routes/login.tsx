@@ -1,7 +1,3 @@
-import classNames from "classnames";
-import { json, redirect } from "@remix-run/node";
-import { useEffect, useMemo, useRef, useState } from "react";
-import type { LoaderArgs, ActionArgs } from "@remix-run/node";
 import {
   Form,
   Link,
@@ -10,6 +6,10 @@ import {
   useNavigation,
   useSearchParams,
 } from "@remix-run/react";
+import classNames from "classnames";
+import { json, redirect } from "@vercel/remix";
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@vercel/remix";
 
 import { Icon } from "~/icons/App";
 import { Carousel } from "~/components/Carousel";
@@ -22,7 +22,7 @@ import { useAuthWithPasskey } from "~/utils/useAuthWithPasskey";
 
 import { LoginSchema } from "~/shared/schema/auth";
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const cookieHeader = request.headers.get("Cookie");
 
   const id = await tokenCookie.parse(cookieHeader);
@@ -37,7 +37,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   return redirect("/");
 };
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const requestData = await request.formData();
   const parseResult = LoginSchema.safeParse(Object.fromEntries(requestData));
 

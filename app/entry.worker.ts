@@ -1,12 +1,8 @@
 /// <reference lib="WebWorker" />
 
 // Service Workers are quite broken in ts, this is a workaround
-import {
-  CacheFirst,
-  NetworkFirst,
-  RemixNavigationHandler,
-  matchRequest,
-} from "@remix-pwa/sw";
+import { cacheFirst, networkFirst } from "@remix-pwa/strategy";
+import { RemixNavigationHandler, matchRequest } from "@remix-pwa/sw";
 
 export type {};
 declare let self: ServiceWorkerGlobalScope;
@@ -23,21 +19,17 @@ self.addEventListener("activate", (event: ExtendableEvent) => {
   event.waitUntil(self.clients.claim());
 });
 
-const assetsCache = new CacheFirst({
-  cacheName: `assets-${PRODUCT_VERSION}`,
-  matchOptions: {
-    ignoreSearch: true,
-    ignoreVary: true,
-  },
+const assetsCache = cacheFirst({
+  cache: `assets-${PRODUCT_VERSION}`,
+  cacheQueryOptions: { ignoreSearch: true, ignoreVary: true },
 });
 
-const loaderCache = new NetworkFirst({
-  cacheName: `loader-cache-${PRODUCT_VERSION}`,
-  isLoader: true,
+const loaderCache = networkFirst({
+  cache: `loader-cache-${PRODUCT_VERSION}`,
 });
 
-const documentCache = new NetworkFirst({
-  cacheName: `document-cache-${PRODUCT_VERSION}`,
+const documentCache = networkFirst({
+  cache: `document-cache-${PRODUCT_VERSION}`,
 });
 
 const fetchHandler = (e: FetchEvent): Promise<Response> => {
@@ -49,11 +41,11 @@ const fetchHandler = (e: FetchEvent): Promise<Response> => {
 
   switch (matched) {
     case "asset":
-      return assetsCache.handle(e.request);
+      return assetsCache(e.request);
     case "loader":
-      return loaderCache.handle(e.request);
+      return loaderCache(e.request);
     case "document":
-      return documentCache.handle(e.request);
+      return documentCache(e.request);
     default:
       return fetch(e.request);
   }
@@ -64,8 +56,8 @@ self.addEventListener("fetch", (e: FetchEvent) => {
 });
 
 const messageHandler = new RemixNavigationHandler({
-  dataCacheName: "data-cache",
-  documentCacheName: "document-cache",
+  dataCache: "data-cache",
+  documentCache: "document-cache",
 });
 
 self.addEventListener("message", (event) => {

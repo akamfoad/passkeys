@@ -1,16 +1,18 @@
-import { Buffer } from "node:buffer";
-import { json, type ActionArgs, type LoaderArgs } from "@remix-run/node";
 import {
   generateRegistrationOptions,
   verifyRegistrationResponse,
 } from "@simplewebauthn/server";
-import { authenticate } from "~/utils/auth.server";
+import { Buffer } from "node:buffer";
+import { json } from "@vercel/remix";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@vercel/remix";
+
 import { db } from "~/utils/db.server";
+import { authenticate } from "~/utils/auth.server";
+import { base64EncodeURL } from "~/utils/base64.server";
 import type { Authenticator } from "~/utils/passkeys.server";
 import { rpID, rpName, rpOrigin } from "~/utils/passkeys.server";
-import { base64EncodeURL } from "~/utils/base64.server";
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { user } = await authenticate(request);
 
   const userAuthenticators = (await db.authenticator.findMany({
@@ -43,7 +45,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   return { options };
 };
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const { user } = await authenticate(request, { withChallenge: true });
 
   const { attResp: body, name } = await request.json();

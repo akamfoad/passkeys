@@ -1,12 +1,13 @@
-import { json, type ActionArgs } from "@remix-run/node";
-import { rpID, type Authenticator, rpOrigin } from "~/utils/passkeys.server";
 import {
   generateAuthenticationOptions,
   verifyAuthenticationResponse,
 } from "@simplewebauthn/server";
+import { json } from "@vercel/remix";
+import type { ActionFunctionArgs } from "@vercel/remix";
 
 import { db } from "~/utils/db.server";
 import { tokenCookie, twoFactorAuthCookie } from "~/utils/token.server";
+import { rpID, type Authenticator, rpOrigin } from "~/utils/passkeys.server";
 
 export const loader = async () => {
   const options = await generateAuthenticationOptions({
@@ -16,7 +17,7 @@ export const loader = async () => {
   return { options };
 };
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const { asseResp: body, challenge: expectedChallenge } = await request.json();
   if (!body.id) {
     return json(

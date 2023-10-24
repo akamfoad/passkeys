@@ -1,4 +1,4 @@
-import { createCookie } from "@remix-run/node";
+import { createCookie } from "@vercel/remix";
 
 const COOKIE_DOMAIN = process.env.COOKIE_DOMAIN;
 const COOKIE_SECRET = process.env.COOKIE_SECRET;

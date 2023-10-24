@@ -1,7 +1,9 @@
-import { redirect, type LoaderArgs } from "@remix-run/node";
+import { redirect } from "@vercel/remix";
+import type { LoaderFunctionArgs } from "@vercel/remix";
+
 import { db } from "~/utils/db.server";
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { searchParams } = new URL(request.url);
   const verificationCode = searchParams.get("code");
 

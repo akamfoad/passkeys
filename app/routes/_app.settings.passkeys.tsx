@@ -1,7 +1,8 @@
-import { format } from "date-fns";
-import { ZodError, z } from "zod";
-import { json } from "@remix-run/node";
-import { useEffect, useState } from "react";
+import type {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  SerializeFrom,
+} from "@vercel/remix";
 import {
   Form,
   Link,
@@ -9,24 +10,28 @@ import {
   useLoaderData,
   useNavigation,
 } from "@remix-run/react";
-import type { ActionArgs, LoaderArgs, SerializeFrom } from "@remix-run/node";
+import { ZodError, z } from "zod";
+import { format } from "date-fns";
+import classNames from "classnames";
+import { json } from "@vercel/remix";
+import { useEffect, useState } from "react";
+import type { Authenticator } from "@prisma/client";
 import { browserSupportsWebAuthn } from "@simplewebauthn/browser";
 
+import Trash from "~/icons/Trash";
 import { Icon } from "~/icons/App";
-import { db } from "~/utils/db.server";
-import { authenticate } from "~/utils/auth.server";
 import { PencilIcon } from "~/icons/Pencil";
 import { Spinner } from "~/components/Spinner";
-import Trash from "~/icons/Trash";
-import classNames from "classnames";
-import type { Authenticator } from "@prisma/client";
+
+import { db } from "~/utils/db.server";
+import { authenticate } from "~/utils/auth.server";
 
 type Passkey = Pick<
   Authenticator,
   "id" | "name" | "credentialBackedUp" | "createdAt" | "lastUsedAt"
 >;
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { user } = await authenticate(request);
 
   const authenticators: Passkey[] = await db.authenticator.findMany({
@@ -96,7 +101,7 @@ const handlePasskeyRename = async (request: Request, userId: number) => {
   }
 };
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const { user } = await authenticate(request);
   switch (request.method.toUpperCase()) {
     case "DELETE":
@@ -260,7 +265,7 @@ const Passkey = ({
         method="DELETE"
         encType="multipart/form-data"
         className={classNames("flex items-center gap-2", {
-          "hidden": isEditing,
+          hidden: isEditing,
         })}
       >
         <input type="hidden" name="id" value={id} />

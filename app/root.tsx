@@ -1,8 +1,4 @@
-import type {
-  LinksFunction,
-  LoaderArgs,
-  V2_MetaFunction,
-} from "@remix-run/node";
+import type { LinksFunction, LoaderFunctionArgs, MetaFunction } from "@vercel/remix";
 import {
   Links,
   LiveReload,
@@ -218,9 +214,12 @@ export const links: LinksFunction = () => [
   },
 ];
 
-export const meta: V2_MetaFunction = () => [
+export const meta: MetaFunction = () => [
   { title: "Passkeys" },
-  { name: "description", content: "Demonstrating passkeys through user's experience!" },
+  {
+    name: "description",
+    content: "Demonstrating passkeys through user's experience!",
+  },
   { name: "apple-mobile-web-app-capable", content: "yes" },
   { name: "viewport", content: "width=device-width, initial-scale=1" },
 ];
@@ -237,7 +236,7 @@ const isAuthPage = (request: Request) => {
   );
 };
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   if (!isAuthPage(request)) {
     const { user } = await authenticate(request);
     return { user };

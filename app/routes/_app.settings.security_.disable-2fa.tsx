@@ -1,11 +1,11 @@
-import { json, redirect } from "@remix-run/node";
+import { json, redirect } from "@vercel/remix";
 import { Form, useActionData } from "@remix-run/react";
-import type { LoaderArgs, ActionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs} from "@vercel/remix";
 
 import { db } from "~/utils/db.server";
 import { authenticate } from "~/utils/auth.server";
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { user } = await authenticate(request, { withOtpEnabled: true });
 
   if (user.otp_enabled === false) {
@@ -15,7 +15,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   return new Response(undefined);
 };
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const { user } = await authenticate(request, { withOtpEnabled: true });
 
   if (user.otp_enabled === false) {

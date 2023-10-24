@@ -7,8 +7,8 @@ import {
   useLoaderData,
   useNavigation,
 } from "@remix-run/react";
-import { json } from "@remix-run/node";
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import { json } from "@vercel/remix";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@vercel/remix";
 
 import { Input } from "~/components/Input";
 
@@ -50,7 +50,7 @@ const passwordSchema = z
     }
   );
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const {
     user: { email, otp_enabled },
   } = await authenticate(request, { withOtpEnabled: true });
@@ -58,7 +58,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   return { email, otp_enabled };
 };
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const { user } = await authenticate(request, { withPassword: true });
 
   const formData = await request.formData();

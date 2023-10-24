@@ -1,4 +1,4 @@
-import { redirect } from "@remix-run/node";
+import { redirect } from "@vercel/remix";
 import { tokenCookie } from "~/utils/token.server";
 
 const logoutUser = async () => {

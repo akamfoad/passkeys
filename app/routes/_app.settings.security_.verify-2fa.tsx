@@ -1,14 +1,16 @@
-import { QRCodeSVG } from "@akamfoad/qrcode";
-import type { LoaderArgs, ActionArgs } from "@remix-run/node";
-import { redirect, json } from "@remix-run/node";
-import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import { useMemo, useRef } from "react";
+import { QRCodeSVG } from "@akamfoad/qrcode";
+import { json, redirect } from "@vercel/remix";
+import { Form, useActionData, useLoaderData } from "@remix-run/react";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@vercel/remix";
+
 import { Input } from "~/components/Input";
-import { authenticate } from "~/utils/auth.server";
+
 import { db } from "~/utils/db.server";
 import { getOTP } from "~/utils/otp.server";
+import { authenticate } from "~/utils/auth.server";
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { user } = await authenticate(request, {
     withOtpSecret: true,
     withOtpVerified: true,
@@ -26,7 +28,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   return json({ otpAuthUrl: user.otp_auth_url });
 };
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const { user } = await authenticate(request, {
     withOtpSecret: true,
     withOtpVerified: true,

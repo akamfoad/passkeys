@@ -1,5 +1,3 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
 import {
   Form,
   useActionData,
@@ -8,15 +6,19 @@ import {
   useLoaderData,
   useNavigation,
 } from "@remix-run/react";
-import classNames from "classnames";
 import { useRef } from "react";
-import { Carousel } from "~/components/Carousel";
+import classNames from "classnames";
+import { json, redirect } from "@vercel/remix";
+import type { ActionFunctionArgs, LoaderFunctionArgs} from "@vercel/remix";
+
 import { Logout } from "~/icons/Logout";
-import { authenticate } from "~/utils/auth.server";
+import { Carousel } from "~/components/Carousel";
+
 import { getOTP } from "~/utils/otp.server";
+import { authenticate } from "~/utils/auth.server";
 import { twoFactorAuthCookie } from "~/utils/token.server";
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { user } = await authenticate(request, {
     check2FA: false,
     withOtpSecret: true,
@@ -36,7 +38,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   return json({ name: user.firstName });
 };
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const { user } = await authenticate(request, {
     check2FA: false,
     withOtpSecret: true,

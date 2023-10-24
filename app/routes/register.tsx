@@ -1,5 +1,5 @@
-import { json, redirect } from "@remix-run/node";
-import type { ActionArgs } from "@remix-run/node";
+import { json, redirect } from "@vercel/remix";
+import type { ActionFunctionArgs } from "@vercel/remix";
 import { Form, Link, useActionData } from "@remix-run/react";
 
 import { Carousel } from "~/components/Carousel";
@@ -10,7 +10,7 @@ import { getRandomHash } from "~/utils/crypto.server";
 import { encryptPassword } from "~/utils/password.server";
 import { sendVerificationEmail } from "~/utils/email.server";
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const requestData = await request.formData();
   const parseResult = RegisterSchema.safeParse(Object.fromEntries(requestData));
 
