@@ -77,7 +77,17 @@ const Verify2FA = () => {
   const { otpAuthUrl } = useLoaderData<typeof loader>();
 
   const qrCodeSvg = useMemo(() => {
-    const qrSVG = new QRCodeSVG(otpAuthUrl, { level: "H", padding: 6 });
+    const qrSVG = new QRCodeSVG(otpAuthUrl, {
+      level: "H",
+      padding: 6,
+      image: {
+        source: "/apple-icon-180.png",
+        width: "20%",
+        height: "20%",
+        x: "center",
+        y: "center",
+      },
+    });
     return qrSVG.toString();
   }, [otpAuthUrl]);
 
