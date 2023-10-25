@@ -1,10 +1,14 @@
 /** @type {import('@remix-run/dev').AppConfig} */
-module.exports = {
+export default {
   ignoredRouteFiles: ["**/.*"],
   // appDirectory: "app",
   // assetsBuildDirectory: "public/build",
   // publicPath: "/build/",
-  serverModuleFormat: "cjs",
+  serverModuleFormat: "esm",
   tailwind: true,
-  serverDependenciesToBundle: ["@simplewebauthn/browser", "@remix-pwa/sw", "otpauth"],
+  serverDependenciesToBundle: [
+    "@simplewebauthn/browser",
+    "@remix-pwa/sw",
+    "otpauth",
+  ],
 };

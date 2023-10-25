@@ -1,6 +1,7 @@
 {
   "private": true,
   "sideEffects": false,
+  "type": "module",
   "scripts": {
     "typecheck": "tsc",
     "dev": "npm run worker:dev && npm run remix:dev",
