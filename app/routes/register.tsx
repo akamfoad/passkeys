@@ -1,6 +1,6 @@
 import { json, redirect } from "@vercel/remix";
 import type { ActionFunctionArgs } from "@vercel/remix";
-import { Form, Link, useActionData } from "@remix-run/react";
+import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
 
 import { Carousel } from "~/components/Carousel";
 
@@ -69,6 +69,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 const Register = () => {
+  const navigation = useNavigation();
   const errors = useActionData<typeof action>();
 
   return (
@@ -93,6 +94,7 @@ const Register = () => {
                 name="firstName"
                 autoComplete="given-name"
                 className="rounded-md border border-zinc-300 block p-2 flex-1"
+                required
               />
             </div>
             <p className="sm:ps-0.5 mt-1 text-rose-500 text-sm font-medium">
@@ -109,6 +111,7 @@ const Register = () => {
                 name="lastName"
                 autoComplete="family-name"
                 className="rounded-md border border-zinc-300 block p-2 flex-1"
+                required
               />
             </div>
             <p className="sm:ps-0.5 mt-1 text-rose-500 text-sm font-medium">
@@ -126,6 +129,7 @@ const Register = () => {
                 id="email"
                 className="rounded-md border border-zinc-300 block p-2 flex-1"
                 autoComplete="email"
+                required
               />
             </div>
             <p className="sm:ps-0.5 mt-1 text-rose-500 text-sm font-medium">
@@ -143,13 +147,17 @@ const Register = () => {
                 id="password"
                 className="rounded-md border border-zinc-300 block p-2 flex-1"
                 autoComplete="new-password"
+                required
               />
             </div>
             <p className="sm:ps-0.5 mt-1 text-rose-500 text-sm font-medium">
               &nbsp;{errors?.password?.[0]}
             </p>
           </div>
-          <button className="mt-1 px-5 py-2 bg-emerald-950 rounded-lg text-white font-medium">
+          <button
+            className="mt-1 px-5 py-2 bg-emerald-950 rounded-lg text-white font-medium"
+            disabled={navigation.state !== "idle"}
+          >
             Register
           </button>
           <p className="text-center mt-2">
