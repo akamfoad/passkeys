@@ -9,6 +9,9 @@ import { RegisterSchema } from "~/shared/schema/auth";
 import { getRandomHash } from "~/utils/crypto.server";
 import { encryptPassword } from "~/utils/password.server";
 import { sendVerificationEmail } from "~/utils/email.server";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const requestData = await request.formData();
@@ -86,80 +89,89 @@ const Register = () => {
           </div>
           <div className="mt-12">
             <div className="flex flex-col gap-0.5">
-              <label className="w-20" htmlFor="firstName">
+              <Label className="w-20" htmlFor="firstName">
                 First name
-              </label>
-              <input
+              </Label>
+              <Input
+                required
                 id="firstName"
                 name="firstName"
                 autoComplete="given-name"
-                className="rounded-md border border-zinc-300 block p-2 flex-1"
-                required
               />
             </div>
             <p className="sm:ps-0.5 mt-1 text-rose-500 text-sm font-medium">
-              &nbsp;{errors?.firstName?.[0]}
+              &nbsp;
+              {errors !== undefined &&
+                "firstName" in errors &&
+                Array.isArray(errors.firstName) &&
+                errors.firstName[0]}
             </p>
           </div>
           <div>
             <div className="flex flex-col gap-0.5">
-              <label className="w-20" htmlFor="lastName">
+              <Label className="w-20" htmlFor="lastName">
                 Last name
-              </label>
-              <input
+              </Label>
+              <Input
+                required
                 id="lastName"
                 name="lastName"
                 autoComplete="family-name"
-                className="rounded-md border border-zinc-300 block p-2 flex-1"
-                required
               />
             </div>
             <p className="sm:ps-0.5 mt-1 text-rose-500 text-sm font-medium">
-              &nbsp;{errors?.lastName?.[0]}
+              &nbsp;
+              {errors !== undefined &&
+                "lastName" in errors &&
+                Array.isArray(errors.lastName) &&
+                errors.lastName[0]}
             </p>
           </div>
           <div>
             <div className="flex flex-col gap-0.5">
-              <label className="w-20" htmlFor="email">
+              <Label className="w-20" htmlFor="email">
                 Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                id="email"
-                className="rounded-md border border-zinc-300 block p-2 flex-1"
-                autoComplete="email"
+              </Label>
+              <Input
                 required
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
               />
             </div>
             <p className="sm:ps-0.5 mt-1 text-rose-500 text-sm font-medium">
-              &nbsp;{errors?.email?.[0]}
+              &nbsp;
+              {errors !== undefined &&
+                "email" in errors &&
+                Array.isArray(errors.email) &&
+                errors.email[0]}
             </p>
           </div>
           <div>
             <div className="flex flex-col gap-0.5">
-              <label className="w-20" htmlFor="password">
+              <Label className="w-20" htmlFor="password">
                 Password
-              </label>
-              <input
-                type="password"
-                name="password"
-                id="password"
-                className="rounded-md border border-zinc-300 block p-2 flex-1"
-                autoComplete="new-password"
+              </Label>
+              <Input
                 required
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="new-password"
               />
             </div>
             <p className="sm:ps-0.5 mt-1 text-rose-500 text-sm font-medium">
-              &nbsp;{errors?.password?.[0]}
+              &nbsp;
+              {errors !== undefined &&
+                "password" in errors &&
+                Array.isArray(errors.password) &&
+                errors.password[0]}
             </p>
           </div>
-          <button
-            className="mt-1 px-5 py-2 bg-emerald-950 rounded-lg text-white font-medium"
-            disabled={navigation.state !== "idle"}
-          >
+          <Button className="mt-1 py-6" disabled={navigation.state !== "idle"}>
             Register
-          </button>
+          </Button>
           <p className="text-center mt-2">
             Already have an account?
             <Link className="ms-2 p-2 rounded-lg" to="/login">

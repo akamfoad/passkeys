@@ -21,6 +21,8 @@ import { tokenCookie, twoFactorAuthCookie } from "~/utils/token.server";
 import { useAuthWithPasskey } from "~/utils/useAuthWithPasskey";
 
 import { LoginSchema } from "~/shared/schema/auth";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const cookieHeader = request.headers.get("Cookie");
@@ -42,6 +44,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const parseResult = LoginSchema.safeParse(Object.fromEntries(requestData));
 
   if (!parseResult.success) {
+    console.log(parseResult.error.flatten());
     return json(parseResult.error.flatten().fieldErrors, { status: 400 });
   }
 
@@ -127,7 +130,7 @@ const Login = () => {
           className={classNames(
             "flex flex-col gap-5 w-full max-w-lg p-4 rounded-md sm:my-auto",
             {
-              "mt-6": congratulatee === null && !errors?.message,
+              "mt-6": congratulatee === null,
             }
           )}
         >
@@ -147,7 +150,7 @@ const Login = () => {
                 is successfully verified!
               </div>
             )}
-            {typeof errors?.message === "string" && (
+            {errors !== undefined && "message" in errors && (
               <div
                 className={classNames("px-4 py-2 bg-rose-500/20 rounded-lg")}
               >
@@ -167,38 +170,21 @@ const Login = () => {
               <label className="w-20" htmlFor="email">
                 Email:
               </label>
-              <div className="relative flex-1">
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  placeholder="pasha@soran.mir"
-                  className="rounded-md border border-zinc-300 block p-2 w-full"
-                  autoComplete="email username webauthn"
-                />
-                <button
-                  onClick={startLoginWithPasskeys}
-                  type="button"
-                  disabled={authenticatingWithPasskey}
-                  className={classNames(
-                    "flex items-center justify-center absolute w-8 h-8 right-3 inset-y-0 my-auto",
-                    "aspect-square p-2 rounded-lg text-slate-600 hover:bg-slate-500/10",
-                    {
-                      "bg-slate-500/10": authenticatingWithPasskey,
-                      hidden: isLoggingIn && !authenticatingWithPasskey,
-                    }
-                  )}
-                >
-                  {authenticatingWithPasskey ? (
-                    <Spinner />
-                  ) : (
-                    <Icon height={16} />
-                  )}
-                </button>
-              </div>
+              <Input
+                type="email"
+                name="email"
+                id="email"
+                placeholder="pasha@soran.mir"
+                className="h-11"
+                autoComplete="email username webauthn"
+              />
             </div>
             <p className="sm:ps-0.5 mt-1 text-rose-500 text-sm font-medium">
-              &nbsp;{errors?.email?.[0]}
+              &nbsp;
+              {errors !== undefined &&
+                "email" in errors &&
+                Array.isArray(errors.email) &&
+                errors.email[0]}
             </p>
           </div>
           <div>
@@ -206,21 +192,41 @@ const Login = () => {
               <label className="w-20" htmlFor="password">
                 Password:
               </label>
-              <input
+              <Input
                 type="password"
                 name="password"
                 id="password"
-                className="rounded-md border border-zinc-300 block p-2 flex-1"
+                className="h-11"
                 autoComplete="current-password webauthn"
               />
             </div>
             <p className="sm:ps-0.5 mt-1 text-rose-500 text-sm font-medium">
-              &nbsp;{errors?.password?.[0]}
+              &nbsp;
+              {errors !== undefined &&
+                "password" in errors &&
+                Array.isArray(errors.password) &&
+                errors.password[0]}
             </p>
           </div>
-          <button className="mt-6 px-5 py-2 bg-emerald-950 rounded-lg text-white font-medium">
+          <Button className="mt-6 py-6" disabled={navigation.state !== "idle"}>
             Login
-          </button>
+          </Button>
+          <Button
+            className="py-6 gap-3"
+            disabled={authenticatingWithPasskey || navigation.state !== "idle"}
+            onClick={startLoginWithPasskeys}
+            type="button"
+            variant="outline"
+          >
+            {authenticatingWithPasskey ? (
+              <Spinner />
+            ) : (
+              <>
+                <Icon height={24} />
+                <span>Login with passkey</span>
+              </>
+            )}
+          </Button>
           <p className="text-center mt-4">
             Don't have an account?
             <Link className="ms-2 p-2 rounded-lg" to="/register">
