@@ -1,11 +1,20 @@
-import { Link, Outlet, useFetcher, useRouteLoaderData } from "@remix-run/react";
+import { type LoaderFunctionArgs } from "@vercel/remix";
+import { Link, Outlet, useFetcher, useLoaderData, useRouteLoaderData } from "@remix-run/react";
+
 import { Icon } from "~/icons/App";
 import { Logout } from "~/icons/Logout";
 import { UserCircle } from "~/icons/UserCircle";
 
+import { authenticate } from "~/utils/auth.server";
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const { user } = await authenticate(request);
+  return { user };
+};
+
 const Navbar = () => {
   const fetcher = useFetcher();
-  const { user } = useRouteLoaderData("root");
+  const { user } = useLoaderData<typeof loader>();
 
   return (
     <header className="fixed inset-x-0 flex items-center justify-between h-14 px-4 lg:px-20 py-2 bg-slate-950 text-slate-50">

@@ -1,4 +1,4 @@
-import type { LinksFunction, LoaderFunctionArgs, MetaFunction } from "@vercel/remix";
+import type { LinksFunction, MetaFunction } from "@vercel/remix";
 import {
   Links,
   LiveReload,
@@ -10,7 +10,6 @@ import {
 import { useSWEffect } from "@remix-pwa/sw";
 
 import styles from "~/styles/tailwind.css";
-import { authenticate } from "./utils/auth.server";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styles },
@@ -224,35 +223,11 @@ export const meta: MetaFunction = () => [
   { name: "viewport", content: "width=device-width, initial-scale=1" },
 ];
 
-const isAuthPage = (request: Request) => {
-  const { pathname } = new URL(request.url);
+// export const loader = async ({ request }: LoaderFunctionArgs) => {
+//   await getUserIdOrRedirect(request, true);
 
-  return (
-    pathname === "/" ||
-    pathname === "/login" ||
-    pathname === "/login/verify" ||
-    pathname === "/register" ||
-    pathname === "/privacy-policy"
-  );
-};
-
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-  if (!isAuthPage(request)) {
-    const { user } = await authenticate(request);
-    return { user };
-  }
-
-  if (new URL(request.url).pathname === "/") {
-    try {
-      const { user } = await authenticate(request);
-      return { user };
-    } catch (error) {
-      // console.log("hey",error);
-    }
-  }
-
-  return { user: undefined };
-};
+//   return null;
+// };
 
 export default function App() {
   useSWEffect();
