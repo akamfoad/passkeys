@@ -9,7 +9,7 @@ import {
 import { useRef } from "react";
 import classNames from "classnames";
 import { json, redirect } from "@vercel/remix";
-import type { ActionFunctionArgs, LoaderFunctionArgs} from "@vercel/remix";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@vercel/remix";
 
 import { Logout } from "~/icons/Logout";
 import { Carousel } from "~/components/Carousel";
@@ -17,6 +17,9 @@ import { Carousel } from "~/components/Carousel";
 import { getOTP } from "~/utils/otp.server";
 import { authenticate } from "~/utils/auth.server";
 import { twoFactorAuthCookie } from "~/utils/token.server";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { user } = await authenticate(request, {
@@ -91,10 +94,9 @@ const TwoFactorAuthentication = () => {
   const isSubmitting =
     navigation.state !== "idle" && navigation.formAction === verify2FAAction;
 
-
-    const logout = ()=>{
-        fetcher.submit(null, {action:"/actions/logout"})
-    }
+  const logout = () => {
+    fetcher.submit(null, { action: "/actions/logout" });
+  };
 
   return (
     <div className="min-h-screen grid grid-cols-2 gap-2">
@@ -116,11 +118,11 @@ const TwoFactorAuthentication = () => {
           </div>
           <div>
             <div className="flex flex-col gap-1">
-              <label htmlFor="token">6-digit code</label>
-              <input
+              <Label htmlFor="token">6-digit code</Label>
+              <Input
                 id="token"
                 name="token"
-                className="rounded-md border border-zinc-300 block p-2 w-full"
+                className="block p-2 w-full"
                 type="text"
                 maxLength={6}
                 minLength={6}
@@ -146,15 +148,17 @@ const TwoFactorAuthentication = () => {
               &nbsp;{actionData?.message}
             </p>
           </div>
-          <button className="mt-6 px-5 py-2 bg-emerald-950 rounded-lg text-white font-medium">
-            Verify
-          </button>
-          {/* <button className=" text-slate-300 hover:text-slate-50 transition-colors"> */}
-          <button type="button" className="flex items-center gap-2 justify-center px-5 py-1.5 border-2 border-emerald-950 rounded-lg font-medium" onClick={logout}>
+          <Button className="mt-6 px-5 py-2">Verify</Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="gap-2 px-5 py-1.5"
+            onClick={logout}
+          >
             Logout
             <Logout />
-          </button>
-            </Form>
+          </Button>
+        </Form>
       </div>
     </div>
   );

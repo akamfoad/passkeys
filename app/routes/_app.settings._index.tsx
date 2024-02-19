@@ -6,14 +6,15 @@ import {
   useLoaderData,
   useNavigation,
 } from "@remix-run/react";
-import type { ActionFunctionArgs, LoaderFunctionArgs} from "@vercel/remix";
-
-import { Input } from "~/components/Input";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@vercel/remix";
 
 import { db } from "~/utils/db.server";
 import { useDebounce } from "~/utils/useDebounce";
 import { authenticate } from "~/utils/auth.server";
 import { userSettingsSchema } from "~/shared/schema/user";
+import { Label } from "~/components/ui/label";
+import { Input } from "~/components/ui/input";
+import { Button } from "~/components/ui/button";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { user } = await authenticate(request);
@@ -65,15 +66,15 @@ const GeneralSettings = () => {
     <section>
       <Form method="POST">
         <div className="space-y-1">
-          <label className="min-w-[80px]" htmlFor="firstName">
+          <Label className="min-w-[80px]" htmlFor="firstName">
             First name:
-          </label>
+          </Label>
           <Input
             id="firstName"
             name="firstName"
             defaultValue={user.firstName}
             autoComplete="given-name"
-            className="max-w-sm w-full bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50"
+            className="max-w-sm w-full"
           />
           <p className="mt-1 text-rose-500 text-sm font-medium">
             &nbsp;{errors?.firstName?.[0]}
@@ -88,7 +89,7 @@ const GeneralSettings = () => {
             name="lastName"
             defaultValue={user.lastName}
             autoComplete="lastName"
-            className="max-w-sm w-full bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50"
+            className="max-w-sm w-full"
           />
           <p className="mt-1 text-rose-500 text-sm font-medium">
             &nbsp;{errors?.lastName?.[0]}
@@ -99,7 +100,7 @@ const GeneralSettings = () => {
           <Input
             name="email"
             defaultValue={user.email}
-            className="max-w-sm w-full bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-950/50 placeholder:select-none pointer-events-none"
+            className="max-w-sm w-full"
             disabled
             readOnly
           />
@@ -107,9 +108,9 @@ const GeneralSettings = () => {
             Changing your email address currently is not supported.
           </p>
         </div>
-        <button className="mt-12 px-5 py-2 bg-emerald-950 rounded-lg text-white font-medium">
+        <Button className="mt-12 px-5 py-2">
           {isSaving ? "Saving..." : "Save"}
-        </button>
+        </Button>
       </Form>
     </section>
   );

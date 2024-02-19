@@ -1,9 +1,10 @@
 import { json, redirect } from "@vercel/remix";
 import { Form, useActionData } from "@remix-run/react";
-import type { ActionFunctionArgs, LoaderFunctionArgs} from "@vercel/remix";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@vercel/remix";
 
 import { db } from "~/utils/db.server";
 import { authenticate } from "~/utils/auth.server";
+import { Button } from "~/components/ui/button";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { user } = await authenticate(request, { withOtpEnabled: true });
@@ -58,11 +59,17 @@ const Enable2FA = () => {
         Are you sure you want to <strong>disable</strong> 2FA?
       </p>
       <Form method="POST" className="mt-4">
-        <input type="hidden" name="nothing" value="nothing" />
-        <button className="block mt-3 px-5 py-2 bg-rose-900 hover:bg-rose-600 active:bg-rose-700 rounded-lg text-white font-medium transition-colors">
+        <Button
+          name="nothing"
+          value="nothing"
+          className="mt-3 px-5 py-2"
+          variant="destructive"
+        >
           Disable
-        </button>
-        <p className="mt-2 text-rose-500 text-sm font-medium">&nbsp;{actionData?.message}</p>
+        </Button>
+        <p className="mt-2 text-rose-500 text-sm font-medium">
+          &nbsp;{actionData?.message}
+        </p>
       </Form>
     </section>
   );

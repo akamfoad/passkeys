@@ -5,6 +5,7 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "@vercel/remix";
 import { db } from "~/utils/db.server";
 import { authenticate } from "~/utils/auth.server";
 import { getOTP, getRandomHexSecret } from "~/utils/otp.server";
+import { Button } from "~/components/ui/button";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { user } = await authenticate(request, { withOtpEnabled: true });
@@ -49,10 +50,9 @@ const Enable2FA = () => {
       </p>
       <p className="mt-4 max-w-lg tracking-wide">Are you ready to setup 2FA?</p>
       <Form method="POST" className="mt-4">
-        <input type="hidden" name="nothing" value="nothing" />
-        <button className="px-5 py-2 bg-emerald-950 rounded-lg self-center text-white font-medium">
+        <Button name="nothing" value="nothing" className="px-5 py-2">
           Enable
-        </button>
+        </Button>
       </Form>
     </section>
   );

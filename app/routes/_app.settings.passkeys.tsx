@@ -25,6 +25,8 @@ import { Spinner } from "~/components/Spinner";
 
 import { db } from "~/utils/db.server";
 import { authenticate } from "~/utils/auth.server";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
 
 type Passkey = Pick<
   Authenticator,
@@ -127,12 +129,11 @@ const PasskeysSettings = () => {
       <header className="flex items-center justify-between mb-8">
         <h1 className="text-lg font-medium">Your Passkeys</h1>
         {isPasskeySupported && (
-          <Link
-            className="px-5 py-2 bg-emerald-950 rounded-lg self-center text-white font-medium"
-            to="add-passkey"
-          >
-            Add a passkey
-          </Link>
+          <Button asChild>
+            <Link className="px-5 py-2" to="add-passkey">
+              Add a passkey
+            </Link>
+          </Button>
         )}
       </header>
       {!isPasskeySupported && (
@@ -209,33 +210,29 @@ const Passkey = ({
               onSubmit={() => setIsEditing(false)}
             >
               <input type="hidden" name="id" value={id} />
-              <input
+              <Input
                 required
                 name="passkeyName"
                 defaultValue={name || ""}
-                className="text-base max-w-sm w-full border border-neutral-300 bg-neutral-100 disabled:bg-slate-50/50 disabled:text-gray-600/50 rounded-md px-1.5 py-0.5"
+                className="text-base max-w-sm w-full h-auto px-1.5 py-0.5"
                 autoFocus
               />
               <div className="flex items-center gap-2 min-w-fit">
-                <button
+                <Button
                   onClick={() => setIsEditing(true)}
-                  className={classNames(
-                    "px-2 py-1 flex items-center justify-center text-sm rounded-md",
-                    "bg-gray-300  hover:bg-gray-400/50 transition-colors"
-                  )}
+                  variant="outline"
+                  className="px-2 py-1 h-auto text-sm border-zinc-400 bg-transparent"
                 >
                   Save
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={() => setIsEditing(false)}
-                  className={classNames(
-                    "px-2 py-1 flex items-center justify-center text-sm rounded-md",
-                    "hover:bg-gray-300/50 transition-colors"
-                  )}
+                  className="font-normal px-2 py-1 h-auto text-sm"
                 >
                   Cancel
-                </button>
+                </Button>
               </div>
             </Form>
           ) : (

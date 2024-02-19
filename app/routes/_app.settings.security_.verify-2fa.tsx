@@ -4,11 +4,11 @@ import { json, redirect } from "@vercel/remix";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@vercel/remix";
 
-import { Input } from "~/components/Input";
-
 import { db } from "~/utils/db.server";
 import { getOTP } from "~/utils/otp.server";
 import { authenticate } from "~/utils/auth.server";
+import { Input } from "~/components/ui/input";
+import { Button } from "~/components/ui/button";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { user } = await authenticate(request, {
@@ -132,7 +132,7 @@ const Verify2FA = () => {
         <div className="flex items-center gap-3">
           <Input
             name="token"
-            className="max-w-sm w-full bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50"
+            className="max-w-sm w-full"
             type="text"
             maxLength={6}
             minLength={6}
@@ -148,9 +148,9 @@ const Verify2FA = () => {
               }
             }}
           />
-          <button className="px-5 py-2 bg-emerald-950 rounded-lg self-center text-white font-medium">
+          <Button className="px-5 py-2 bg-emerald-950 rounded-lg self-center text-white font-medium">
             verify
-          </button>
+          </Button>
         </div>
         <p className="sm:ps-0.5 mt-1 text-rose-500 text-sm font-medium">
           &nbsp;{actionData?.message}

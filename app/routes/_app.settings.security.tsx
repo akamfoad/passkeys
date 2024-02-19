@@ -10,12 +10,13 @@ import {
 import { json } from "@vercel/remix";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@vercel/remix";
 
-import { Input } from "~/components/Input";
-
 import { db } from "~/utils/db.server";
 import { useDebounce } from "~/utils/useDebounce";
 import { authenticate } from "~/utils/auth.server";
 import { encryptPassword, isPasswordMatch } from "~/utils/password.server";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 
 const passwordSchema = z
   .object({
@@ -114,19 +115,13 @@ const SecuritySettings = () => {
             : "Two factor authentication is not enabled."}
         </p>
         {otp_enabled ? (
-          <Link
-            to="disable-2fa"
-            className="inline-block mt-3 px-5 py-2 bg-rose-900 hover:bg-rose-600 active:bg-rose-700 rounded-lg text-white font-medium transition-colors"
-          >
-            Disable
-          </Link>
+          <Button asChild variant="destructive" className="mt-3 px-5">
+            <Link to="disable-2fa">Disable</Link>
+          </Button>
         ) : (
-          <Link
-            to="enable-2fa"
-            className="inline-block mt-3 px-5 py-2 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 rounded-lg text-white font-medium transition-colors"
-          >
-            Enable
-          </Link>
+          <Button asChild variant="cta" className="mt-3 px-5">
+            <Link to="enable-2fa">Enable</Link>
+          </Button>
         )}
       </section>
       <section className="mt-14">
@@ -135,46 +130,46 @@ const SecuritySettings = () => {
         <Form method="POST" className="mt-6 space-y-4">
           <input type="hidden" name="email" value={email} hidden />
           <div className="space-y-1">
-            <label className="text-sm min-w-[80px]">Current Password:</label>
+            <Label className="text-sm min-w-[80px]">Current Password:</Label>
             <Input
               type="password"
               name="currentPassword"
               autoComplete="current-password"
-              className="max-w-sm w-full bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50"
+              className="max-w-sm w-full"
             />
             <p className="mt-1 text-rose-500 text-sm font-medium">
               &nbsp;{errors?.currentPassword?.[0]}
             </p>
           </div>
           <div className="space-y-1">
-            <label className="text-sm min-w-[80px]">New Password:</label>
+            <Label className="text-sm min-w-[80px]">New Password:</Label>
             <Input
               type="password"
               name="newPassword"
               autoComplete="new-password"
-              className="max-w-sm w-full bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50"
+              className="max-w-sm w-full"
             />
             <p className="mt-1 text-rose-500 text-sm font-medium">
               &nbsp;{errors?.newPassword?.[0]}
             </p>
           </div>
           <div className="space-y-1">
-            <label className="text-sm min-w-[80px]">
+            <Label className="text-sm min-w-[80px]">
               Confirm New Password:
-            </label>
+            </Label>
             <Input
               type="password"
               name="confirmNewPassword"
               autoComplete="new-password"
-              className="max-w-sm w-full bg-slate-50/70 disabled:bg-slate-50/50 disabled:text-gray-600/50"
+              className="max-w-sm w-full"
             />
             <p className="mt-1 text-rose-500 text-sm font-medium">
               &nbsp;{errors?.confirmNewPassword?.[0]}
             </p>
           </div>
-          <button className="px-5 py-2 bg-emerald-950 rounded-lg self-center text-white font-medium">
+          <Button className="px-5 py-2">
             {isSaving ? "Saving..." : "Save"}
-          </button>
+          </Button>
         </Form>
       </section>
     </section>

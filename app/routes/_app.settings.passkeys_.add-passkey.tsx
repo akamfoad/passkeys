@@ -5,6 +5,7 @@ import { startRegistration } from "@simplewebauthn/browser";
 
 import { Icon } from "~/icons/App";
 import { generatePasskeyName } from "~/utils/ua";
+import { Button } from "~/components/ui/button";
 
 const AddPasskey = () => {
   const [status, setStatus] = useState<{
@@ -93,23 +94,22 @@ const AddPasskey = () => {
         &nbsp;{status.message}
       </p>
       <div className="flex items-center justify-center gap-6 mt-10">
-        <Link className="px-6 py-2" to="/settings/passkeys">
-          Cancel
-        </Link>
+        <Button asChild variant="ghost" className="px-6 py-2">
+          <Link to="/settings/passkeys">Cancel</Link>
+        </Button>
         {isSuccess === true ? (
-          <Link className="px-6 py-2" to="/settings/passkeys">
-            See your passkeys
-          </Link>
+          <Button asChild variant="ghost" className="px-6 py-2">
+            <Link className="px-6 py-2" to="/settings/passkeys">
+              See your passkeys
+            </Link>
+          </Button>
         ) : (
-          <button
-            className={classNames(
-              "px-5 py-2 bg-emerald-950 rounded-lg self-center text-white font-medium",
-              { "opacity-70": isCreating }
-            )}
+          <Button
+            className={classNames("px-5 py-2", { "opacity-70": isCreating })}
             onClick={generatePasskey}
           >
             {isCreating ? "Adding passkey..." : "Add passkey"}
-          </button>
+          </Button>
         )}
       </div>
     </section>
