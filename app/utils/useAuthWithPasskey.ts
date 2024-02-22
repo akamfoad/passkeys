@@ -1,8 +1,5 @@
-import { useEffect, useState } from "react";
-import {
-  browserSupportsWebAuthnAutofill,
-  startAuthentication,
-} from "@simplewebauthn/browser";
+import { useState } from "react";
+import { startAuthentication } from "@simplewebauthn/browser";
 
 export const useAuthWithPasskey = () => {
   const [authenticatingWithPasskey, setAuthenticatingWithPasskey] =
@@ -11,11 +8,8 @@ export const useAuthWithPasskey = () => {
     null
   );
 
-  const loginWithPasskeys = async (fromAutofill?: boolean) => {
-    if (!fromAutofill) {
-      setAuthenticatingWithPasskey(true);
-    }
-
+  const startLoginWithPasskeys = async () => {
+    setAuthenticatingWithPasskey(true);
     setPasskeyAuthMessage(null);
 
     let options;
@@ -24,29 +18,29 @@ export const useAuthWithPasskey = () => {
       const { options: authOptions } = await resp.json();
       options = authOptions;
     } catch {
-      if (!fromAutofill) {
-        setPasskeyAuthMessage(
-          "Failed to load necessary information to proceed login by passkey."
-        );
-      }
+      setPasskeyAuthMessage(
+        "Failed to load necessary information to proceed login by passkey."
+      );
 
       return;
     }
 
     let asseResp;
     try {
-      asseResp = await startAuthentication(options, fromAutofill);
+      asseResp = await startAuthentication(options);
     } catch (error) {
       console.log(error);
-      if (!fromAutofill) {
-        setAuthenticatingWithPasskey(false);
-        if (error instanceof Error && error.name !== "NotAllowedError") {
-          setPasskeyAuthMessage(error.message);
-        }
+      setAuthenticatingWithPasskey(false);
+      if (error instanceof Error && error.name !== "NotAllowedError") {
+        setPasskeyAuthMessage(error.message);
       }
     }
 
-    if (asseResp === undefined) return;
+    if (asseResp === undefined) {
+      setAuthenticatingWithPasskey(false);
+      setPasskeyAuthMessage("Something went wrong, try again!");
+      return;
+    }
 
     const verificationResp = await fetch("/actions/passkeys/authentication", {
       method: "POST",
@@ -62,31 +56,19 @@ export const useAuthWithPasskey = () => {
     // Show UI appropriate for the `verified` status
     if (verificationJSON && verificationJSON.verified) {
       window.location.pathname = "/";
-    } else if (!fromAutofill) {
+    } else {
       setPasskeyAuthMessage(
         verificationJSON?.message ||
           "Something went wrong while trying to authenticate user"
       );
     }
 
-    if (!fromAutofill) {
-      setAuthenticatingWithPasskey(false);
-    }
+    setAuthenticatingWithPasskey(false);
   };
 
-  useEffect(() => {
-    try {
-      browserSupportsWebAuthnAutofill().then((supported) => {
-        if (supported) loginWithPasskeys(true);
-      });
-    } finally {
-      return;
-    }
-  }, []);
-
   return {
-    authenticatingWithPasskey,
     passkeyAuthMessage,
-    startLoginWithPasskeys: () => loginWithPasskeys(),
+    startLoginWithPasskeys,
+    authenticatingWithPasskey,
   };
 };
