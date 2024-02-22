@@ -37,6 +37,7 @@ export const useAuthWithPasskey = () => {
     try {
       asseResp = await startAuthentication(options, fromAutofill);
     } catch (error) {
+      console.log(error);
       if (!fromAutofill) {
         setAuthenticatingWithPasskey(false);
         if (error instanceof Error && error.name !== "NotAllowedError") {
