@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { startAuthentication } from "@simplewebauthn/browser";
+import { WebAuthnError, startAuthentication } from "@simplewebauthn/browser";
 
 export const useAuthWithPasskey = () => {
   const [authenticatingWithPasskey, setAuthenticatingWithPasskey] =
@@ -29,8 +29,16 @@ export const useAuthWithPasskey = () => {
     try {
       asseResp = await startAuthentication(options);
     } catch (error) {
-      console.log(error);
       setAuthenticatingWithPasskey(false);
+
+      if (
+        error instanceof WebAuthnError &&
+        error.code === "ERROR_CEREMONY_ABORTED"
+      ) {
+        return;
+      }
+
+      console.log(error);
       if (error instanceof Error && error.name !== "NotAllowedError") {
         setPasskeyAuthMessage(error.message);
       }
