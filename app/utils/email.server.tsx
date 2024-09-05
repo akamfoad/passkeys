@@ -7,9 +7,7 @@ import {
 
 const EMAIL_FROM = process.env.EMAIL_FROM;
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const EMAIL_VERIFY_URL = process.env.EMAIL_VERIFY_URL;
-const EMAIL_RESET_PASSWORD_URL = process.env.EMAIL_RESET_PASSWORD_URL;
-const EMAIL_SETTINGS_SECURITY_URL = process.env.EMAIL_SETTINGS_SECURITY_URL;
+const HOST_BASE_URL = process.env.HOST_BASE_URL;
 
 if (typeof EMAIL_FROM !== "string") {
   throw new Error(
@@ -23,40 +21,28 @@ if (typeof RESEND_API_KEY !== "string") {
   );
 }
 
-if (typeof EMAIL_VERIFY_URL !== "string") {
+if (typeof HOST_BASE_URL !== "string") {
   throw new Error(
-    `Expected EMAIL_VERIFY_URL to be a string, instead go ${EMAIL_VERIFY_URL}`
-  );
-}
-
-if (typeof EMAIL_RESET_PASSWORD_URL !== "string") {
-  throw new Error(
-    `Expected EMAIL_RESET_PASSWORD_URL to be a string, instead go ${EMAIL_RESET_PASSWORD_URL}`
-  );
-}
-
-if (typeof EMAIL_SETTINGS_SECURITY_URL !== "string") {
-  throw new Error(
-    `Expected EMAIL_SETTINGS_SECURITY_URL to be a string, instead go ${EMAIL_SETTINGS_SECURITY_URL}`
+    `Expected HOST_BASE_URL to be a string, instead go ${HOST_BASE_URL}`
   );
 }
 
 const resend = new Resend(RESEND_API_KEY);
 
 const getVerificationUrl = (code: string) => {
-  const url = new URL(EMAIL_VERIFY_URL);
+  const url = new URL("/verify-email", HOST_BASE_URL);
   url.searchParams.set("code", code);
   return url.href;
 };
 
 const getResetPasswordUrl = (code: string) => {
-  const url = new URL(EMAIL_RESET_PASSWORD_URL);
+  const url = new URL("/reset-password", HOST_BASE_URL);
   url.searchParams.set("code", code);
   return url.href;
 };
 
 const getSettingsSecurityUrl = () => {
-  return new URL(EMAIL_SETTINGS_SECURITY_URL).toString();
+  return new URL("/settings/security", HOST_BASE_URL).toString();
 };
 
 export const sendVerificationEmail = async ({
@@ -72,7 +58,13 @@ export const sendVerificationEmail = async ({
     to,
     from: EMAIL_FROM,
     subject: "Passkeys Verification Code",
-    react: <AccountCreatedEmail name={name} email={to} url={getVerificationUrl(code)} />,
+    react: (
+      <AccountCreatedEmail
+        name={name}
+        email={to}
+        url={getVerificationUrl(code)}
+      />
+    ),
   });
 
   return id;
