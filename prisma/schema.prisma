@@ -17,13 +17,19 @@ model User {
   verificationCode String?         @unique @db.VarChar(255)
   isVerified       Boolean         @default(false)
   currentChallenge String?         @unique @db.VarChar(255)
+  otp_enabled      Boolean         @default(false)
+  otp_verified     Boolean         @default(false)
+  otp_hex          String?
+  otp_auth_url     String?
   authenticators   Authenticator[]
+}
 
-  otp_enabled  Boolean @default(false)
-  otp_verified Boolean @default(false)
-
-  otp_hex      String?
-  otp_auth_url String?
+model ForgetPassword {
+  id               Int      @id @default(autoincrement())
+  verificationCode String   @db.VarChar(255)
+  email            String   @db.VarChar(255)
+  isVerified       Boolean  @default(false)
+  createdAt        DateTime @default(now())
 }
 
 model Authenticator {

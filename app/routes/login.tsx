@@ -207,6 +207,9 @@ const Login = () => {
                 Array.isArray(errors.password) &&
                 errors.password[0]}
             </p>
+            <Link className="mt-4 text-slate-600" to="/forgot-password">
+              can't remember your password?
+            </Link>
           </div>
           <Button className="mt-6 py-6" disabled={navigation.state !== "idle"}>
             Login
