@@ -31,7 +31,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     const verificationCode = getRandomHash(email);
 
     await db.forgetPassword.create({
-      data: { email, validUntil: 1000 * 60 * 60 * 24, verificationCode },
+      data: { email, verificationCode },
     });
 
     await sendResetPasswordEmail({
