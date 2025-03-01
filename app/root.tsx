@@ -8,6 +8,7 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import { useSWEffect } from "@remix-pwa/sw";
+import { Analytics } from "@vercel/analytics/remix";
 
 import styles from "~/styles/tailwind.css";
 
@@ -241,6 +242,7 @@ export default function App() {
         <Links />
       </head>
       <body className="min-h-screen flex flex-col font-sans overflow-y-auto">
+        <Analytics />
         <Outlet />
         <ScrollRestoration />
         <Scripts />
